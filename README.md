@@ -3,7 +3,7 @@ AI Agent phân tích cổ phiếu VN
 
 Về mặt hệ thống:
 
-User -> Agent loop -> LLM (Claude)
+![System Design](assets/0126fa1d-e485-42e4-bc31-fccf4e68b0f6.jpg)
 
 # Cài đặt:
 # 1. Clone repo
