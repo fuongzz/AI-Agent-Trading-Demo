@@ -292,12 +292,9 @@ Khi phân tích một mã cổ phiếu, hãy:
 
 if __name__ == "__main__":
     print("""
-╔══════════════════════════════════════════════════════════╗
-║   DEMO: AI AGENT - DỮ LIỆU THỰC QUA VNSTOCK (FREE)     ║
-║                                                          ║
-║  Không cần đăng nhập, lấy thẳng từ VCI/TCBS/KBS        ║
-║  Nhập bất kỳ mã HOSE/HNX: VNM, HPG, FPT, VIC, MSN...  ║
-╚══════════════════════════════════════════════════════════╝
+DEMO: AI AGENT - Phân tích mã cổ phiếu                        
+Nhập bất kỳ mã HOSE/HNX: VNM, HPG, FPT, VIC, MSN...     
+Agent sẽ tự động lấy dữ liệu thực, tính RSI, MA và đưa ra nhận định kỹ thuật.
     """)
 
     symbol = input("Nhập mã cổ phiếu (vd: VNM): ").strip().upper() or "VNM"
