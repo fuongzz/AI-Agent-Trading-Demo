@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(py -3.11 --version)",
+      "Bash(python -m pip install -r requirements.txt)"
+    ]
+  }
+}

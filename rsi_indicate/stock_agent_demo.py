@@ -1,6 +1,6 @@
 import anthropic
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -243,14 +243,58 @@ def calculate_atr(highs: list, lows: list, closes: list, period: int = 14) -> di
     }
 
 
+def get_session_progress() -> float:
+    """Trả về tỷ lệ phiên giao dịch đã trôi qua (0.0–1.0). 1.0 nếu phiên đã kết thúc."""
+    vn_tz = timezone(timedelta(hours=7))  # UTC+7
+    now = datetime.now(vn_tz)
+
+    # Cuối tuần → dùng dữ liệu phiên trước (đã hoàn chỉnh)
+    if now.weekday() >= 5:
+        return 1.0
+
+    market_open  = now.replace(hour=9,  minute=15, second=0, microsecond=0)
+    lunch_start  = now.replace(hour=11, minute=30, second=0, microsecond=0)
+    lunch_end    = now.replace(hour=13, minute=0,  second=0, microsecond=0)
+    market_close = now.replace(hour=14, minute=30, second=0, microsecond=0)
+
+    # Tổng số phút giao dịch thực = sáng (135') + chiều (90') = 225'
+    total_minutes = 225
+
+    if now < market_open:
+        return 1.0   # Trước giờ mở cửa → dữ liệu là phiên hôm trước
+    if now >= market_close:
+        return 1.0   # Sau giờ đóng cửa → phiên hôm nay đã hoàn chỉnh
+    if lunch_start <= now < lunch_end:
+        elapsed = 135  # Nghỉ trưa → tính đến hết phiên sáng
+    elif now >= lunch_end:
+        elapsed = 135 + int((now - lunch_end).total_seconds() // 60)
+    else:
+        elapsed = int((now - market_open).total_seconds() // 60)
+
+    return max(elapsed / total_minutes, 0.01)
+
+
 def analyze_volume(closes: list, volumes: list, period: int = 20) -> dict:
     """Phân tích khối lượng giao dịch — xác nhận xu hướng giá"""
     if len(volumes) < period:
         return {"error": f"Cần ít nhất {period} phiên để phân tích khối lượng"}
 
-    avg_vol   = sum(volumes[-period:]) / period
+    avg_vol    = sum(volumes[-period:]) / period
     latest_vol = volumes[-1]
-    vol_ratio  = round(latest_vol / avg_vol, 2) if avg_vol > 0 else 0
+
+    # Nếu phiên hôm nay chưa kết thúc, scale volume lên để ước tính cả ngày
+    progress = get_session_progress()
+    intraday_note = ""
+    projected_vol = latest_vol
+    if progress < 1.0:
+        projected_vol = latest_vol / progress
+        intraday_note = (
+            f"⚠️ Phiên chưa kết thúc ({round(progress*100)}% thời gian đã qua). "
+            f"Volume thực tế: {int(latest_vol):,} — Ước tính cả phiên: {int(projected_vol):,}. "
+            f"Dùng volume ước tính để so sánh."
+        )
+
+    vol_ratio = round(projected_vol / avg_vol, 2) if avg_vol > 0 else 0
 
     # Xu hướng giá: so sánh 5 phiên gần nhất
     price_up = closes[-1] > closes[-5] if len(closes) >= 5 else None
@@ -273,11 +317,13 @@ def analyze_volume(closes: list, volumes: list, period: int = 20) -> dict:
 
     return {
         "latest_volume":    int(latest_vol),
+        "projected_volume": int(projected_vol),
         "avg_volume_20":    int(avg_vol),
         "volume_ratio":     vol_ratio,
         "signal":           signal,
         "volume_spike":     len(spike_sessions) > 0,
-        "spike_note":       f"Có {len(spike_sessions)} phiên đột biến volume trong 3 phiên gần nhất" if spike_sessions else "Không có đột biến volume"
+        "spike_note":       f"Có {len(spike_sessions)} phiên đột biến volume trong 3 phiên gần nhất" if spike_sessions else "Không có đột biến volume",
+        "intraday_note":    intraday_note,
     }
 
 
@@ -619,18 +665,115 @@ Khi phân tích một mã cổ phiếu, thực hiện đầy đủ theo thứ t�
 
 
 
+# Agent tiết kiệm: tính hết trong Python, gọi Claude 1 lần duy nhất
+
+
+def run_agent_lite(symbol: str):
+    """
+    Phiên bản tiết kiệm cost:
+    - Tính toàn bộ indicators trong Python (không dùng tool_use)
+    - Chỉ gọi Claude API 1 lần để tổng hợp kết quả
+    - Dùng model Haiku (rẻ hơn ~20x so với Sonnet)
+    """
+    client = anthropic.Anthropic()
+    symbol = symbol.upper()
+
+    print(f"\n{'='*60}")
+    print(f"[LITE] Phân tích {symbol} — đang tính toán...")
+    print("="*60)
+
+    # Bước 1: Lấy dữ liệu
+    ohlcv   = fetch_ohlcv(symbol)
+    company = fetch_company_info(symbol)
+    rt      = fetch_realtime(symbol)
+
+    if "error" in ohlcv:
+        print(f"Lỗi: {ohlcv['error']}")
+        return
+
+    closes  = ohlcv["closes"]
+    highs   = ohlcv["highs"]
+    lows    = ohlcv["lows"]
+    volumes = ohlcv["volumes"]
+
+    # Bước 2: Tính hết trong Python
+    results = {
+        "company":     company,
+        "price_info": {
+            "symbol":      symbol,
+            "latest":      ohlcv["latest_price"],
+            "open":        ohlcv["open"],
+            "high":        ohlcv["high"],
+            "low":         ohlcv["low"],
+            "volume":      ohlcv["volume"],
+            "change":      ohlcv["change"],
+            "change_pct":  ohlcv["change_pct"],
+            "date":        ohlcv["date"],
+            "sessions":    ohlcv["total_sessions"],
+        },
+        "realtime":    rt,
+        "rsi":         calculate_rsi(closes),
+        "ma5":         calculate_moving_average(closes, 5),
+        "ma20":        calculate_moving_average(closes, 20),
+        "macd":        calculate_macd(closes),
+        "bollinger":   calculate_bollinger(closes),
+        "atr":         calculate_atr(highs, lows, closes),
+        "volume":      analyze_volume(closes, volumes),
+        "support_resistance": find_support_resistance(closes, highs, lows),
+    }
+
+    # Bước 3: Gọi Claude 1 lần với kết quả đã tính sẵn (không truyền raw arrays)
+    prompt = f"""Dưới đây là kết quả phân tích kỹ thuật cổ phiếu {symbol} đã được tính sẵn:
+
+{json.dumps(results, ensure_ascii=False, indent=2)}
+
+Hãy tổng hợp phân tích kỹ thuật đầy đủ bằng tiếng Việt gồm:
+- Tên công ty, ngành, sàn
+- Giá hiện tại, thay đổi so với hôm qua
+- RSI: mức và ý nghĩa
+- MA5 vs MA20: golden/death cross, xu hướng
+- MACD: tín hiệu momentum, giao cắt
+- Bollinger Bands: giá ở vùng nào, %B
+- ATR: biến động, gợi ý SL/TP cụ thể (giá tuyệt đối)
+- Khối lượng: so với TB 20 phiên, xác nhận xu hướng
+- Hỗ trợ/Kháng cự: vùng S/R gần nhất, khoảng cách %
+- KHUYẾN NGHỊ: Mua/Bán/Chờ, điểm vào, SL, TP, lý do tổng hợp"""
+
+    print("Gửi kết quả cho Claude tổng hợp...")
+    response = client.messages.create(
+        model="claude-haiku-4-5-20251001",
+        max_tokens=2048,
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    answer = response.content[0].text
+    print(f"\n{'='*60}\nKẾT QUẢ PHÂN TÍCH ({symbol}):\n{'='*60}")
+    print(answer)
+    print("="*60)
+    usage = response.usage
+    print(f"\n[Chi phí ước tính] Input: {usage.input_tokens} tokens | Output: {usage.output_tokens} tokens")
+
+
 # Run
 
 
 if __name__ == "__main__":
     print("""
-DEMO: AI AGENT - Phân tích mã cổ phiếu                        
-Nhập bất kỳ mã HOSE/HNX: VNM, HPG, FPT, VIC, MSN...     
-Agent sẽ tự động lấy dữ liệu thực, tính RSI, MA và đưa ra nhận định kỹ thuật.
+DEMO: AI AGENT - Phân tích mã cổ phiếu
+Nhập bất kỳ mã HOSE/HNX: VNM, HPG, FPT, VIC, MSN...
+
+Chọn chế độ:
+  1. Full agent  — Nhiều tính năng, tốn cost hơn (Sonnet + tool_use ~10 lần gọi)
+  2. Lite agent  — Tiết kiệm cost (Haiku + 1 lần gọi API)
     """)
 
     symbol = input("Nhập mã cổ phiếu (vd: VNM): ").strip().upper() or "VNM"
-    run_agent(
-        f"Phân tích kỹ thuật cổ phiếu {symbol}. "
-        f"Giá hiện tại bao nhiêu? RSI đang ở đâu? Xu hướng ngắn hạn thế nào?"
-    )
+    mode   = input("Chế độ (1/2, mặc định 2): ").strip() or "2"
+
+    if mode == "1":
+        run_agent(
+            f"Phân tích kỹ thuật cổ phiếu {symbol}. "
+            f"Giá hiện tại bao nhiêu? RSI đang ở đâu? Xu hướng ngắn hạn thế nào?"
+        )
+    else:
+        run_agent_lite(symbol)
