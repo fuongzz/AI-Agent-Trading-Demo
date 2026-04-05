@@ -1,0 +1,58 @@
+{
+  "symbol": "VCG",
+  "date": "2026-04-03",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 21.4,
+    "change": "-0.8",
+    "change_pct": "-3.6%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 37.21,
+      "signal": "NEUTRAL"
+    },
+    "ma": {
+      "ma5": 22.05,
+      "ma20": 21.85,
+      "trend": "GIẢM",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": 0.389,
+      "signal": 0.4427,
+      "histogram": -0.0537,
+      "signal_text": "DEATH CROSS"
+    },
+    "bollinger": {
+      "upper": 24.17,
+      "middle": 21.85,
+      "lower": 19.53,
+      "percent_b": 40.3,
+      "signal_text": "GIÁ DƯỚI MIDDLE BAND"
+    },
+    "atr": {
+      "value": 1.13,
+      "volatility": "RẤT CAO"
+    },
+    "volume": {
+      "ratio": 0.94,
+      "signal": "BÌNH THƯỜNG"
+    },
+    "sr": {
+      "support": 21.2,
+      "resistance": 22.6,
+      "zone_signal": "GIÁ SÁT HỖ TRỢ"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 21.2,
+    "sl": 19.7,
+    "tp": 23.66,
+    "confidence": "THẤP",
+    "reason": "MACD death cross + giá dưới MA5/MA20 cho tín hiệu bán mạnh. Tuy nhiên, RSI trung tính và giá sát hỗ trợ 21.2 tạo cơ hội bounce. Nên chờ xác nhận tín hiệu tích cực trước khi vào."
+  }
+}

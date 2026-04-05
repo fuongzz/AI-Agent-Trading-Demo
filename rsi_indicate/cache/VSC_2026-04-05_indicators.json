@@ -1,0 +1,99 @@
+{
+  "company": {
+    "symbol": "VSC",
+    "company": "N/A",
+    "industry": "N/A",
+    "exchange": "N/A",
+    "source": "Vnstock company info"
+  },
+  "price_info": {
+    "symbol": "VSC",
+    "date": "66",
+    "latest": 23.8,
+    "open": 24.3,
+    "high": 24.5,
+    "low": 23.75,
+    "volume": 3907600,
+    "change": -0.5,
+    "change_pct": "-2.06%"
+  },
+  "realtime": {
+    "symbol": "VSC",
+    "realtime_price": 23.8,
+    "volume": 428400,
+    "time": "2026-04-03 14:45:00+07:00",
+    "source": "Vnstock intraday"
+  },
+  "rsi": {
+    "rsi": 37.7,
+    "signal": "NEUTRAL (trung tính) → Chờ thêm tín hiệu",
+    "period": 14
+  },
+  "ma5": {
+    "ma": 23.87,
+    "latest_price": 23.8,
+    "trend": "DƯỚI MA → Xu hướng giảm ⚠️",
+    "period": 5
+  },
+  "ma20": {
+    "ma": 24.09,
+    "latest_price": 23.8,
+    "trend": "DƯỚI MA → Xu hướng giảm ⚠️",
+    "period": 20
+  },
+  "macd": {
+    "macd": -0.0057,
+    "signal": 0.1106,
+    "histogram": -0.1163,
+    "signal_text": "MACD âm nhưng đang phục hồi → Theo dõi thêm 🟡",
+    "fast": 12,
+    "slow": 26,
+    "signal_period": 9
+  },
+  "bollinger": {
+    "upper": 26.07,
+    "middle": 24.09,
+    "lower": 22.1,
+    "latest_price": 23.8,
+    "percent_b": 42.82,
+    "bandwidth": 16.48,
+    "signal_text": "GIÁ DƯỚI MIDDLE BAND → Xu hướng giảm ⚠️",
+    "period": 20
+  },
+  "atr": {
+    "atr": 0.92,
+    "atr_pct": "3.87%",
+    "latest_price": 23.8,
+    "volatility": "CAO — Biến động mạnh, cần SL rộng hơn ⚠️",
+    "sl_suggestion": 22.42,
+    "tp_suggestion": 25.64,
+    "period": 14
+  },
+  "volume": {
+    "latest_volume": 3907600,
+    "projected_volume": 3907600,
+    "avg_volume_20": 5448630,
+    "volume_ratio": 0.72,
+    "signal": "VOLUME BÌNH THƯỜNG → Không có tín hiệu đặc biệt 😐",
+    "volume_spike": false,
+    "spike_note": "Không có đột biến volume",
+    "intraday_note": ""
+  },
+  "support_resistance": {
+    "latest_price": 23.8,
+    "nearest_resistance": 26.25,
+    "nearest_support": 22.85,
+    "dist_to_resistance": "+10.29%",
+    "dist_to_support": "-3.99%",
+    "all_resistances": [
+      26.25,
+      27.9
+    ],
+    "all_supports": [
+      22.85,
+      22.45,
+      21.5
+    ],
+    "zone_signal": "Gần hỗ trợ hơn (-3.99%) — Vùng an toàn xem xét mua 🟢"
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "company": {
+    "symbol": "SSI",
+    "company": "N/A",
+    "industry": "N/A",
+    "exchange": "N/A",
+    "source": "Vnstock company info"
+  },
+  "price_info": {
+    "symbol": "SSI",
+    "date": "66",
+    "latest": 27.0,
+    "open": 27.7,
+    "high": 27.8,
+    "low": 27.0,
+    "volume": 27134200,
+    "change": -0.55,
+    "change_pct": "-2.0%"
+  },
+  "realtime": {
+    "symbol": "SSI",
+    "realtime_price": 27.0,
+    "volume": 2365500,
+    "time": "2026-04-03 14:45:00+07:00",
+    "source": "Vnstock intraday"
+  },
+  "rsi": {
+    "rsi": 42.13,
+    "signal": "NEUTRAL (trung tính) → Chờ thêm tín hiệu",
+    "period": 14
+  },
+  "ma5": {
+    "ma": 27.19,
+    "latest_price": 27.0,
+    "trend": "DƯỚI MA → Xu hướng giảm ⚠️",
+    "period": 5
+  },
+  "ma20": {
+    "ma": 27.66,
+    "latest_price": 27.0,
+    "trend": "DƯỚI MA → Xu hướng giảm ⚠️",
+    "period": 20
+  },
+  "macd": {
+    "macd": -0.9506,
+    "signal": -1.0758,
+    "histogram": 0.1253,
+    "signal_text": "MACD tăng tốc → Đà tăng đang mạnh lên ✅",
+    "fast": 12,
+    "slow": 26,
+    "signal_period": 9
+  },
+  "bollinger": {
+    "upper": 30.19,
+    "middle": 27.66,
+    "lower": 25.14,
+    "latest_price": 27.0,
+    "percent_b": 36.83,
+    "bandwidth": 18.26,
+    "signal_text": "GIÁ DƯỚI MIDDLE BAND → Xu hướng giảm ⚠️",
+    "period": 20
+  },
+  "atr": {
+    "atr": 1.04,
+    "atr_pct": "3.85%",
+    "latest_price": 27.0,
+    "volatility": "CAO — Biến động mạnh, cần SL rộng hơn ⚠️",
+    "sl_suggestion": 25.44,
+    "tp_suggestion": 29.08,
+    "period": 14
+  },
+  "volume": {
+    "latest_volume": 27134200,
+    "projected_volume": 27134200,
+    "avg_volume_20": 37741250,
+    "volume_ratio": 0.72,
+    "signal": "VOLUME BÌNH THƯỜNG → Không có tín hiệu đặc biệt 😐",
+    "volume_spike": false,
+    "spike_note": "Không có đột biến volume",
+    "intraday_note": ""
+  },
+  "support_resistance": {
+    "latest_price": 27.0,
+    "nearest_resistance": 27.25,
+    "nearest_support": 26.0,
+    "dist_to_resistance": "+0.93%",
+    "dist_to_support": "-3.7%",
+    "all_resistances": [
+      27.25,
+      28.5,
+      29.45
+    ],
+    "all_supports": [
+      26.0,
+      25.2
+    ],
+    "zone_signal": "GIÁ SÁT KHÁNG CỰ (27.25) — Rủi ro bị chặn ⚠️"
+  }
+}

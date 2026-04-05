@@ -1,33 +1,17 @@
 """
-Backtest engine — tái sử dụng các hàm indicator từ stock_agent_demo.py
-Chiến lược: kết hợp RSI + MA crossover + MACD histogram
+Backtest engine — Chiến lược: RSI + MA crossover + MACD histogram
 
 Cách chạy:
     python rsi_indicate/backtest.py
 """
 
 import json
-from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# Patch pandas compatibility
-try:
-    import pandas as pd
-    if not hasattr(pd.DataFrame, "applymap"):
-        pd.DataFrame.applymap = pd.DataFrame.map
-except ImportError:
-    pass
-
-# Import các hàm indicator đã có
-from stock_agent_demo import (
-    fetch_ohlcv,
-    calculate_rsi,
-    calculate_moving_average,
-    calculate_macd,
-    analyze_volume,
-)
+from fetcher import fetch_ohlcv
+from indicators import calculate_rsi, calculate_moving_average, calculate_macd, analyze_volume
 
 
 # ── Cấu hình chiến lược ──────────────────────────────────────────────────────

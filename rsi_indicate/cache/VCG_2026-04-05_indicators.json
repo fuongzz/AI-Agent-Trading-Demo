@@ -1,0 +1,99 @@
+{
+  "company": {
+    "symbol": "VCG",
+    "company": "N/A",
+    "industry": "N/A",
+    "exchange": "N/A",
+    "source": "Vnstock company info"
+  },
+  "price_info": {
+    "symbol": "VCG",
+    "date": "66",
+    "latest": 21.4,
+    "open": 22.3,
+    "high": 22.35,
+    "low": 21.3,
+    "volume": 14471800,
+    "change": -0.8,
+    "change_pct": "-3.6%"
+  },
+  "realtime": {
+    "symbol": "VCG",
+    "realtime_price": 21.4,
+    "volume": 729800,
+    "time": "2026-04-03 14:45:00+07:00",
+    "source": "Vnstock intraday"
+  },
+  "rsi": {
+    "rsi": 37.21,
+    "signal": "NEUTRAL (trung tính) → Chờ thêm tín hiệu",
+    "period": 14
+  },
+  "ma5": {
+    "ma": 22.05,
+    "latest_price": 21.4,
+    "trend": "DƯỚI MA → Xu hướng giảm ⚠️",
+    "period": 5
+  },
+  "ma20": {
+    "ma": 21.85,
+    "latest_price": 21.4,
+    "trend": "DƯỚI MA → Xu hướng giảm ⚠️",
+    "period": 20
+  },
+  "macd": {
+    "macd": 0.389,
+    "signal": 0.4427,
+    "histogram": -0.0537,
+    "signal_text": "DEATH CROSS → Tín hiệu BÁN mạnh 🔴",
+    "fast": 12,
+    "slow": 26,
+    "signal_period": 9
+  },
+  "bollinger": {
+    "upper": 24.17,
+    "middle": 21.85,
+    "lower": 19.53,
+    "latest_price": 21.4,
+    "percent_b": 40.3,
+    "bandwidth": 21.24,
+    "signal_text": "GIÁ DƯỚI MIDDLE BAND → Xu hướng giảm ⚠️",
+    "period": 20
+  },
+  "atr": {
+    "atr": 1.13,
+    "atr_pct": "5.28%",
+    "latest_price": 21.4,
+    "volatility": "RẤT CAO — Rủi ro lớn, nên giảm khối lượng giao dịch 🔴",
+    "sl_suggestion": 19.7,
+    "tp_suggestion": 23.66,
+    "period": 14
+  },
+  "volume": {
+    "latest_volume": 14471800,
+    "projected_volume": 14471800,
+    "avg_volume_20": 15424065,
+    "volume_ratio": 0.94,
+    "signal": "VOLUME BÌNH THƯỜNG → Không có tín hiệu đặc biệt 😐",
+    "volume_spike": false,
+    "spike_note": "Không có đột biến volume",
+    "intraday_note": ""
+  },
+  "support_resistance": {
+    "latest_price": 21.4,
+    "nearest_resistance": 22.6,
+    "nearest_support": 21.2,
+    "dist_to_resistance": "+5.61%",
+    "dist_to_support": "-0.93%",
+    "all_resistances": [
+      22.6,
+      24.5
+    ],
+    "all_supports": [
+      21.2,
+      20.2,
+      18.65
+    ],
+    "zone_signal": "GIÁ SÁT HỖ TRỢ (21.2) — Tiềm năng bounce 🟢"
+  }
+}
