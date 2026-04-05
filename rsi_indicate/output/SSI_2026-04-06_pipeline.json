@@ -1,0 +1,120 @@
+{
+  "symbol": "SSI",
+  "timestamp": "2026-04-06 00:24:26",
+  "elapsed_sec": 23.2,
+  "ptkt_report": {
+    "symbol": "SSI",
+    "date": "2026-04-03",
+    "company": "N/A",
+    "exchange": "N/A",
+    "industry": "N/A",
+    "price": {
+      "latest": 27.0,
+      "change": -0.55,
+      "change_pct": "-2.0%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 42.13,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 27.19,
+        "ma20": 27.66,
+        "trend": "GIẢM",
+        "cross": "NONE"
+      },
+      "macd": {
+        "macd": -0.9506,
+        "signal": -1.0758,
+        "histogram": 0.1253,
+        "signal_text": "MACD tăng tốc → Đà tăng đang mạnh lên"
+      },
+      "bollinger": {
+        "upper": 30.19,
+        "middle": 27.66,
+        "lower": 25.14,
+        "percent_b": 36.83,
+        "signal_text": "Giá dưới middle band → Xu hướng giảm"
+      },
+      "atr": {
+        "value": 1.04,
+        "volatility": "CAO"
+      },
+      "volume": {
+        "ratio": 0.72,
+        "signal": "Bình thường → Không có tín hiệu đặc biệt"
+      },
+      "sr": {
+        "support": 26.0,
+        "resistance": 27.25,
+        "zone_signal": "Giá sát kháng cự (27.25) — Rủi ro bị chặn"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 26.0,
+      "sl": 25.44,
+      "tp": 29.08,
+      "confidence": "THẤP",
+      "reason": "Xu hướng giảm trên MA5/MA20 nhưng MACD bắt đầu tăng tốc. Cần chờ tín hiệu xác nhận trước khi vào vị thế do volatility cao và giá sát kháng cự."
+    }
+  },
+  "debate": {
+    "symbol": "SSI",
+    "bull": {
+      "stance": "BULL",
+      "score": 58,
+      "top_reasons": [
+        "MACD tăng tốc với histogram dương (+0.1253) - tín hiệu phục hồi momentum đang diễn ra, đà tăng mạnh lên từ điểm yếu nhất",
+        "RSI ở 42.13 (NEUTRAL) chứng tỏ chưa overbought - còn khoảng trống để tăng giá, không bị mệt mỏi kỹ thuật",
+        "Giá 27.0 sát hỗ trợ gần 26.0 (vùng tích lũy tiềm năng) - nếu giữ được mức này sẽ là điểm pivot tốt để lên 27.25 và vượt qua",
+        "Volatility cao (ATR = 1.04) - tạo cơ hội chuyển động mạnh khi momentum đảo chiều, thuận lợi cho bắt sóng tăng",
+        "MA5 (27.19) đã cắt lên trên giá 27.0 - tín hiệu vừa khít của sự bắt đầu hồi phục, crossover tích cực sắp xảy ra"
+      ],
+      "entry_suggestion": 26.5,
+      "tp_target": 28.8,
+      "main_risk": "Bollinger Bands cho thấy giá dưới middle band (27.66) và xu hướng vẫn giảm - nếu không vượt được kháng cự 27.25, momentum có thể mất đi và rơi về 26.0 hoặc thấp hơn. Volume ratio 0.72 (bình thường) chưa đủ mạnh để xác nhận phá vỡ"
+    },
+    "bear": {
+      "stance": "BEAR",
+      "score": 62,
+      "top_risks": [
+        "Giá sát kháng cự 27.25 - Rủi ro bị chặn và đảo chiều giảm mạnh",
+        "Moving average ngắn hạn (MA5: 27.19) dưới MA20 (27.66) - Xu hướng chính giảm, không có crossover tăng",
+        "Giá dưới middle band Bollinger (27.66) - Xác nhận áp lực bán, momentum giảm",
+        "MACD âm (-0.9506) và signal âm (-1.0758) - Mặc dù histogram dương nhưng vẫn ở vùng âm, không đủ mạnh",
+        "RSI 42.13 ở vùng trung tính thấp - Cơ hội bán áp dụng, chưa có tín hiệu phục hồi",
+        "Volatility cao (ATR: 1.04) - Rủi ro giảm đột ngột khi breakout kháng cự thất bại",
+        "Volume ratio 0.72 - Thiếu khối lượng hỗ trợ, tín hiệu yếu, dễ bị kéo xuống"
+      ],
+      "sl_suggestion": 27.35,
+      "downside_target": 25.8,
+      "main_bull_flaw": "MACD histogram dương và tăng tốc được coi là tín hiệu tăng, nhưng giá trị MACD và signal line vẫn ở vùng âm sâu (-0.95 và -1.08), không đủ để xác nhận xu hướng tăng. Đây là divergence cảnh báo - động lực tăng yếu, chỉ là phục hồi kỹ thuật trong xu hướng giảm. Kết hợp với MA giảm và giá dưới middle band, tăng tốc MACD có thể chỉ là cú tăng thoáng qua trước khi tiếp tục giảm."
+    },
+    "summary": {
+      "bull_score": 58,
+      "bear_score": 62,
+      "dominant_side": "BEAR",
+      "key_agreement": "Cả 2 bên công nhận: (1) Giá 27.0 ở vùng kháng cự 27.25 với rủi ro đảo chiều, (2) Volume ratio 0.72 yếu không xác nhận breakout, (3) ATR cao tạo cơ hội chuyển động mạnh cả 2 hướng, (4) Giá dưới middle band Bollinger 27.66 cho thấy áp lực bán",
+      "key_disagreement": "Diễn giải MACD histogram: Bull coi dương (+0.1253) là tín hiệu phục hồi momentum, Bear nhấn mạnh MACD và signal line vẫn âm sâu (-0.95, -1.08) nên chỉ là hồi phục thoáng qua trong xu hướng giảm chính",
+      "bull_strongest_point": "MACD histogram tăng tốc dương kết hợp RSI 42.13 chưa overbought tạo khoảng trống tăng giá, MA5 vừa cắt lên giá là tín hiệu khởi động hồi phục",
+      "bear_strongest_point": "Cấu trúc xu hướng: MA5 (27.19) vẫn dưới MA20 (27.66), MACD/signal line sâu âm, giá dưới middle band — divergence này cho thấy tăng tốc MACD không đủ mạnh để lật đổ xu hướng giảm chính, rủi ro bị chặn ở 27.25 và giảm mạnh",
+      "market_context": "SSI ở điểm quay quanh hỗ trợ/kháng cự gần nhau (26.0-27.25) với động lực kỹ thuật mập mờ: MACD đang hồi phục nhưng vẫn âm, volume yếu, MA still bearish — đây là giai đoạn không rõ ràng giữa rủi ro giảm tiếp và cơ hội hồi phục",
+      "uncertainty_level": "CAO"
+    }
+  },
+  "decision": {
+    "symbol": "SSI",
+    "action": "CHỜ",
+    "entry": null,
+    "sl": null,
+    "tp": null,
+    "risk_reward": null,
+    "nav_pct": 0,
+    "holding_period": null,
+    "confidence": "THẤP",
+    "reason": "Tín hiệu kỹ thuật mập mờ với Bear dominance (62 vs 58) và ATR cao tạo biến động lớn. Mặc dù MACD tăng tốc gợi ý hồi phục, nhưng MA5 vẫn dưới MA20, giá dưới middle band, MACD/signal line sâu âm và volume yếu cho thấy xu hướng giảm vẫn kiểm soát. Giai đoạn consolidation 26.0-27.25 không đủ độ tin cậy để vào lệnh.",
+    "invalidation": "Nếu giá phá vượt kháng cự 27.25 kèm volume tăng và MACD dương hoàn toàn, có thể xem xét lệnh mua. Ngược lại, nếu giá test lại support 26.0 và ATR không giảm, rủi ro xuống 25.0+ tăng cao."
+  }
+}

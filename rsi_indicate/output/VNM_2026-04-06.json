@@ -1,0 +1,58 @@
+{
+  "symbol": "VNM",
+  "date": "2026-04-03",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 60.0,
+    "change": -0.8,
+    "change_pct": "-1.32%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 40.0,
+      "signal": "NEUTRAL"
+    },
+    "ma": {
+      "ma5": 60.64,
+      "ma20": 61.18,
+      "trend": "GIẢM",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": -1.3206,
+      "signal": -1.4578,
+      "histogram": 0.1372,
+      "signal_text": "MACD giảm tốc → Đà tăng đang yếu dần"
+    },
+    "bollinger": {
+      "upper": 63.34,
+      "middle": 61.18,
+      "lower": 59.03,
+      "percent_b": 22.51,
+      "signal_text": "GIÁ DƯỚI MIDDLE BAND → Xu hướng giảm"
+    },
+    "atr": {
+      "value": 1.28,
+      "volatility": "TRUNG BÌNH"
+    },
+    "volume": {
+      "ratio": 0.71,
+      "signal": "VOLUME BÌNH THƯỜNG"
+    },
+    "sr": {
+      "support": 59.2,
+      "resistance": 62.2,
+      "zone_signal": "GIÁ SÁT HỖ TRỢ (59.2) — Tiềm năng bounce"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 59.2,
+    "sl": 58.08,
+    "tp": 62.56,
+    "confidence": "TRUNG BÌNH",
+    "reason": "Giá sát mức hỗ trợ 59.2 với RSI trung tính. Nên chờ tín hiệu bounce hoặc xác nhận xu hướng trước khi vào lệnh."
+  }
+}

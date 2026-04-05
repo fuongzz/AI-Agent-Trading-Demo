@@ -1,0 +1,120 @@
+{
+  "symbol": "VNM",
+  "timestamp": "2026-04-06 00:18:43",
+  "elapsed_sec": 32.0,
+  "ptkt_report": {
+    "symbol": "VNM",
+    "date": "2026-04-03",
+    "company": "N/A",
+    "exchange": "N/A",
+    "industry": "N/A",
+    "price": {
+      "latest": 60.0,
+      "change": -0.8,
+      "change_pct": "-1.32%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 40.0,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 60.64,
+        "ma20": 61.18,
+        "trend": "GIẢM",
+        "cross": "NONE"
+      },
+      "macd": {
+        "macd": -1.3206,
+        "signal": -1.4578,
+        "histogram": 0.1372,
+        "signal_text": "MACD giảm tốc → Đà tăng đang yếu dần"
+      },
+      "bollinger": {
+        "upper": 63.34,
+        "middle": 61.18,
+        "lower": 59.03,
+        "percent_b": 22.51,
+        "signal_text": "GIÁ DƯỚI MIDDLE BAND → Xu hướng giảm"
+      },
+      "atr": {
+        "value": 1.28,
+        "volatility": "TRUNG BÌNH"
+      },
+      "volume": {
+        "ratio": 0.71,
+        "signal": "VOLUME BÌNH THƯỜNG"
+      },
+      "sr": {
+        "support": 59.2,
+        "resistance": 62.2,
+        "zone_signal": "GIÁ SÁT HỖ TRỢ (59.2) — Tiềm năng bounce"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 59.2,
+      "sl": 58.08,
+      "tp": 62.56,
+      "confidence": "TRUNG BÌNH",
+      "reason": "Giá sát mức hỗ trợ 59.2 với RSI trung tính. Nên chờ tín hiệu bounce hoặc xác nhận xu hướng trước khi vào lệnh."
+    }
+  },
+  "debate": {
+    "symbol": "VNM",
+    "bull": {
+      "stance": "BULL",
+      "score": 58,
+      "top_reasons": [
+        "Giá sát vùng hỗ trợ 59.2 → Tiềm năng bounce mạnh với R/R tốt (bounce lên 62.2 = +3.7%, loss chỉ -0.8%)",
+        "MACD histogram dương (+0.1372) và đang tăng → Tín hiệu đà tăng bắt đầu phục hồi, chưa đảo chiều hoàn toàn",
+        "Percent B = 22.51 (dưới 30) → Giá ở vùng quá bán, điều kiện lý tưởng cho bounce từ đáy",
+        "RSI = 40 (Neutral, chưa oversold) → Còn dư địa phục hồi, chưa xuống dưới 30, khả năng hồi phục tốt",
+        "Volatility trung bình (ATR 1.28) → Đủ động lực để di chuyển nhưng vẫn kiểm soát được",
+        "Volume bình thường (0.71) → Không có đổ xô bán hàng, điều kiện ổn định để tích lũy"
+      ],
+      "entry_suggestion": 59.5,
+      "tp_target": 62.8,
+      "main_risk": "Xu hướng trung hạn vẫn giảm (MA5 < MA20, giá dưới middle band) → Nếu vỡ 59.2 sẽ test tiếp 57.5, bounce có thể chỉ là retracement tạm thời, không phải đảo chiều xu hướng"
+    },
+    "bear": {
+      "stance": "BEAR",
+      "score": 72,
+      "top_risks": [
+        "RSI = 40 (Neutral-Bearish): Chưa vào oversold, nhưng không có sức bật mạnh, rủi ro tiếp tục giảm từ mức 40 xuống 30",
+        "MACD giảm tốc & Histogram dương nhỏ: Đà tăng đã mất động lực, MACD dương nhưng signal line âm (MACD < Signal) = crossover giảm sắp xảy ra",
+        "Giá dưới Bollinger Middle Band (60.0 < 61.18): Xác nhận xu hướng giảm, thiếu sức mua tổ chức",
+        "MA5 < MA20 (60.64 < 61.18): Đường trung bình di động ngắn hạn yếu hơn trung hạn, không có tín hiệu Golden Cross",
+        "Percent B = 22.51%: Giá ở vùng thấp trong Bollinger Band, gần mức support 59.2 nhưng có nguy cơ breakout xuống",
+        "Volume Ratio = 0.71: Khối lượng giao dịch bình thường → thiếu khối lượng hỗ trợ cho bounce, dễ bị tiếp tục bán áp"
+      ],
+      "sl_suggestion": 62.8,
+      "downside_target": 58.5,
+      "main_bull_flaw": "Không có tín hiệu bullish rõ ràng: RSI không oversold (chỉ 40), MACD đang giảm tốc không phải tăng tốc, volume yếu không hỗ trợ rebound, giá đã dưới MA20 và Bollinger Middle Band. Chỉ điểm yếu duy nhất là gần support 59.2, nhưng hiện tại lực mua không đủ mạnh để tạo bounce bền vững. Rủi ro mục tiêu dưới 58.5 là cao hơn khả năng rebound lên 62.2."
+    },
+    "summary": {
+      "bull_score": 58,
+      "bear_score": 72,
+      "dominant_side": "BEAR",
+      "key_agreement": "Cả hai bên đều công nhận giá đang ở vùng support 59.2, volume yếu (0.71), và thiếu tín hiệu bullish rõ ràng từ khối lượng giao dịch",
+      "key_disagreement": "Bull cho rằng MACD histogram dương (+0.1372) và RSI = 40 tạo điều kiện cho bounce từ vùng quá bán, trong khi Bear khẳng định MACD đang giảm tốc (signal line âm), RSI chưa vào oversold thực sự (chỉ 40, không phải <30), và không đủ động lực để rebound bền vững",
+      "bull_strongest_point": "Vị trí giá sát support 59.2 với tỷ lệ risk/reward thuận lợi (bounce +3.7% vs loss -0.8%), kết hợp Percent B = 22.51 (quá bán) tạo cơ hội technical bounce ngắn hạn",
+      "bear_strongest_point": "Xu hướng trung hạn rõ ràng giảm: MA5 < MA20, giá dưới Bollinger Middle Band, MACD đang mất động lực (histogram nhỏ, signal line âm), volume yếu không hỗ trợ rebound, rủi ro test 58.5 hoặc thấp hơn cao hơn khả năng bounce bền vững lên 62.2",
+      "market_context": "VNM đang trong xu hướng giảm trung hạn rõ ràng với các chỉ báo MA, Bollinger Band, và MACD đều bearish. Giá hiện ở vùng support kỹ thuật có thể trigger bounce ngắn hạn, nhưng thiếu khối lượng và động lực chỉ báo để xác nhận sự phục hồi bền vững.",
+      "uncertainty_level": "TRUNG BÌNH"
+    }
+  },
+  "decision": {
+    "symbol": "VNM",
+    "action": "CHỜ",
+    "entry": null,
+    "sl": null,
+    "tp": null,
+    "risk_reward": null,
+    "nav_pct": 0,
+    "holding_period": null,
+    "confidence": "THẤP",
+    "reason": "Xu hướng giảm trung hạn rõ ràng (MA5<MA20, giá dưới Bollinger Middle, MACD mất động lực) chiếm ưu thế với Bear score 72. Mặc dù support 59.2 gần và có tiềm năng bounce ngắn hạn, nhưng thiếu khối lượng và xác nhận chỉ báo để chứng minh phục hồi bền vững. Cần chờ tín hiệu mạnh hơn trước khi vào lệnh.",
+    "invalidation": "Nếu giá phá qua kháng cự 62.2 với volume tăng mạnh và MACD histogram dương trở lại, hoặc ngược lại: giá test 58.5 và break dưới support 59.2 thì kịch bản Bear được xác nhận."
+  }
+}
