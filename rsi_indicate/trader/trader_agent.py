@@ -13,7 +13,7 @@ import anthropic
 MODEL = "claude-haiku-4-5-20251001"
 
 
-def run(ptkt_report: dict, debate: dict) -> dict:
+def run(ptkt_report: dict, debate: dict, sentiment: dict = None) -> dict:
     """
     Chạy Trader Agent.
     Trả về TraderDecision — quyết định giao dịch cuối cùng.
@@ -26,14 +26,37 @@ def run(ptkt_report: dict, debate: dict) -> dict:
     client = anthropic.Anthropic()
 
     system = """Bạn là Trader chuyên nghiệp tại một quỹ đầu tư Việt Nam.
-Nhiệm vụ: Đọc báo cáo kỹ thuật và kết quả tranh luận Bull/Bear, đưa ra quyết định giao dịch cuối cùng.
+Nhiệm vụ: Đọc báo cáo kỹ thuật, kết quả tranh luận Bull/Bear, và sentiment tin tức để đưa ra quyết định giao dịch cuối cùng.
 
-Nguyên tắc bắt buộc:
-- Luôn đặt SL (stop loss) để bảo vệ vốn
-- Tỷ lệ Risk/Reward tối thiểu 1:1.5
+ĐẶC THÙ THỊ TRƯỜNG CHỨNG KHOÁN VIỆT NAM — BẮT BUỘC PHẢI HIỂU:
+- KHÔNG CÓ SHORT SELLING (bán khống) trên HOSE/HNX. Tuyệt đối không đề xuất short.
+- Chỉ có 3 trạng thái: MUA vào / BÁN cổ phiếu đang nắm giữ / CHỜ quan sát
+- MUA: dành cho nhà đầu tư chưa nắm giữ, muốn mua vào
+- BÁN: dành cho nhà đầu tư ĐANG NẮM GIỮ cổ phiếu, muốn thoát ra
+- CHỜ: không hành động — chưa đủ tín hiệu để MUA hoặc BÁN
+- Biên độ dao động ±7%/phiên, thanh toán T+3, không có công cụ phái sinh phổ thông
+
+NGUYÊN TẮC ĐẶT GIÁ:
+- MUA → entry < giá hiện tại hoặc bằng (mua ở giá hợp lý), SL thấp hơn entry, TP cao hơn entry
+- BÁN → exit_price là giá nên thoát (gần giá hiện tại), KHÔNG có SL/TP kiểu short
+         Thay vào đó: nêu "dấu hiệu nên giữ lại" nếu thị trường hồi phục
+- CHỜ → nêu điều kiện cụ thể để MUA hoặc để BÁN (nếu đang nắm giữ)
 - % NAV: tối đa 20% cho 1 lệnh, phụ thuộc độ tin cậy
-- Xem xét đặc thù VN: biên độ ±7%/phiên, thanh khoản, T+3
 - Trả về JSON hợp lệ, KHÔNG có markdown"""
+
+    # Phần sentiment — chỉ thêm nếu có dữ liệu
+    sentiment_block = ""
+    if sentiment and not sentiment.get("skipped"):
+        sentiment_block = f"""
+=== SENTIMENT TIN TỨC (Sentiment Agent) ===
+Tâm lý tổng thể: {sentiment.get("overall_sentiment")} (Điểm: {sentiment.get("sentiment_score")}/100)
+Tác động ngắn hạn: {sentiment.get("short_term_impact")}
+Chủ đề chính: {", ".join(sentiment.get("key_topics", []))}
+Tích cực: {"; ".join(sentiment.get("positive_signals", [])[:2])}
+Tiêu cực: {"; ".join(sentiment.get("negative_signals", [])[:2])}
+Catalyst: {sentiment.get("catalyst", "Không có")}
+Tóm tắt: {sentiment.get("sentiment_summary")}
+"""
 
     user = f"""=== BÁO CÁO KỸ THUẬT (PTKT Agent) ===
 Mã: {ptkt_report.get("symbol")} | Giá: {ptkt_report.get("price", {}).get("latest")} | Ngày: {ptkt_report.get("date")}
@@ -55,21 +78,43 @@ Dominant: {debate.get("summary", {}).get("dominant_side")} | Uncertainty: {debat
 Luận điểm Bull mạnh nhất: {debate.get("summary", {}).get("bull_strongest_point")}
 Luận điểm Bear mạnh nhất: {debate.get("summary", {}).get("bear_strongest_point")}
 Bức tranh thị trường: {debate.get("summary", {}).get("market_context")}
-
+{sentiment_block}
 === YÊU CẦU ===
-Đưa ra quyết định giao dịch. Trả về JSON:
+Đưa ra quyết định giao dịch phù hợp thị trường Việt Nam. Trả về JSON:
+
+Nếu action = "MUA" (chưa nắm giữ, muốn mua vào):
 {{
-  "symbol": "...",
-  "action": "MUA/BÁN/CHỜ",
-  "entry": 0.0,
-  "sl": 0.0,
-  "tp": 0.0,
-  "risk_reward": 0.0,
+  "symbol": "...", "action": "MUA",
+  "entry": giá mua vào hợp lý,
+  "sl": giá cắt lỗ (THẤP HƠN entry),
+  "tp": giá chốt lời (CAO HƠN entry),
+  "risk_reward": (tp - entry) / (entry - sl),
   "nav_pct": 0-20,
   "holding_period": "ngắn hạn (1-5 phiên)/trung hạn (1-4 tuần)/dài hạn",
   "confidence": "CAO/TRUNG BÌNH/THẤP",
-  "reason": "lý do tổng hợp 2-3 câu kết hợp kỹ thuật + debate",
-  "invalidation": "điều kiện nào khiến quyết định này sai (vd: giá phá SL, volume sụt)"
+  "reason": "lý do mua — kỹ thuật + debate + sentiment",
+  "invalidation": "dấu hiệu cho thấy quyết định mua là sai"
+}}
+
+Nếu action = "BÁN" (đang nắm giữ, nên thoát ra):
+{{
+  "symbol": "...", "action": "BÁN",
+  "exit_price": giá nên thoát ra (gần giá hiện tại),
+  "sl": null, "tp": null, "risk_reward": null, "nav_pct": null,
+  "holding_period": null,
+  "confidence": "CAO/TRUNG BÌNH/THẤP",
+  "reason": "lý do nên bán — rủi ro cụ thể từ kỹ thuật + debate + sentiment",
+  "invalidation": "dấu hiệu thị trường hồi phục — nếu xuất hiện thì cân nhắc giữ lại"
+}}
+
+Nếu action = "CHỜ":
+{{
+  "symbol": "...", "action": "CHỜ",
+  "entry": null, "sl": null, "tp": null, "risk_reward": null, "nav_pct": null,
+  "holding_period": null,
+  "confidence": "CAO/TRUNG BÌNH/THẤP",
+  "reason": "lý do chưa hành động",
+  "invalidation": "điều kiện cụ thể để chuyển sang MUA hoặc BÁN (nếu đang nắm giữ)"
 }}"""
 
     print("  Đang phân tích PTKTReport + DebateSummary...")
@@ -82,6 +127,7 @@ Bức tranh thị trường: {debate.get("summary", {}).get("market_context")}
     )
 
     raw = response.content[0].text.strip()
+    raw = raw.replace("```json", "").replace("```", "").strip()
     try:
         start = raw.find("{"); end = raw.rfind("}") + 1
         decision = json.loads(raw[start:end])
@@ -97,8 +143,14 @@ def _print_decision(d: dict):
     icon   = {"MUA": "🟢", "BÁN": "🔴", "CHỜ": "🟡"}.get(action, "")
     print(f"\n{'='*60}")
     print(f"  QUYẾT ĐỊNH CUỐI: {icon} {action}  (Tin cậy: {d.get('confidence', '?')})")
-    print(f"  Vào lệnh: {d.get('entry')}  |  SL: {d.get('sl')}  |  TP: {d.get('tp')}")
-    print(f"  R/R: 1:{d.get('risk_reward')}  |  % NAV: {d.get('nav_pct')}%  |  Kỳ hạn: {d.get('holding_period')}")
+
+    if action == "MUA":
+        print(f"  Vào lệnh: {d.get('entry')}  |  SL: {d.get('sl')}  |  TP: {d.get('tp')}")
+        print(f"  R/R: 1:{d.get('risk_reward')}  |  % NAV: {d.get('nav_pct')}%  |  Kỳ hạn: {d.get('holding_period')}")
+    elif action == "BÁN":
+        print(f"  Giá thoát đề xuất: {d.get('exit_price')}  (dành cho người ĐANG nắm giữ)")
+    # CHỜ: không in giá
+
     print(f"  Lý do: {d.get('reason')}")
-    print(f"  Vô hiệu khi: {d.get('invalidation')}")
+    print(f"  {'Dấu hiệu giữ lại' if action == 'BÁN' else 'Điều kiện hành động' if action == 'CHỜ' else 'Vô hiệu khi'}: {d.get('invalidation')}")
     print("="*60)

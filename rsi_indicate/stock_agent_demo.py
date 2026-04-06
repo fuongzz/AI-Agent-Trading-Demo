@@ -1,30 +1,27 @@
 """
-stock_agent_demo.py — Entry point
-Chạy: python stock_agent_demo.py
+stock_agent_demo.py — Entry point chính
+Chạy: python stock_agent_demo.py  hoặc  run.bat
 """
 
-from dotenv import load_dotenv
-load_dotenv()
+import sys, io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
 
-from agent import run_agent, run_agent_lite
+from orchestrator import run_pipeline
 
 if __name__ == "__main__":
     print("""
-DEMO: AI AGENT - Phân tích mã cổ phiếu
-Nhập bất kỳ mã HOSE/HNX: VNM, HPG, FPT, VIC, MSN...
-
-Chọn chế độ:
-  1. Full agent  — Sonnet + tool_use (~10 lần gọi API)
-  2. Lite agent  — Haiku + JSON output + cache (tiết kiệm cost)
+╔══════════════════════════════════════════════════════════╗
+║       MULTI-AGENT TRADING SYSTEM — VN STOCK MARKET       ║
+║                                                          ║
+║  Tầng I-A : PTKT Agent    (chỉ báo kỹ thuật)             ║
+║  Tầng I-B : Sentiment     (crawl CafeF + VnExpress)      ║
+║  Tầng II  : Debate Agent  (Bull vs Bear)                 ║
+║  Tầng III : Trader Agent  (quyết định cuối)              ║
+╚══════════════════════════════════════════════════════════╝
     """)
 
-    symbol = input("Nhập mã cổ phiếu (vd: VNM): ").strip().upper() or "VNM"
-    mode   = input("Chế độ (1/2, mặc định 2): ").strip() or "2"
+    symbol = input("Nhập mã cổ phiếu (vd: VNM, HPG, FPT): ").strip().upper() or "VNM"
+    force  = input("Bỏ qua cache, chạy lại từ đầu? (y/N): ").strip().lower() == "y"
 
-    if mode == "1":
-        run_agent(
-            f"Phân tích kỹ thuật cổ phiếu {symbol}. "
-            f"Giá hiện tại bao nhiêu? RSI đang ở đâu? Xu hướng ngắn hạn thế nào?"
-        )
-    else:
-        run_agent_lite(symbol)
+    run_pipeline(symbol, force=force)

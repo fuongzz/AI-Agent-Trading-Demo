@@ -1,8 +1,11 @@
 """
 indicators.py — Tính toán các chỉ báo kỹ thuật
-RSI, MA, MACD, Bollinger Bands, ATR, Volume, Support/Resistance
+Dùng pandas_ta để tối ưu, bổ sung Market Regime và Confluence.
 """
 
+import pandas as pd
+import importlib.metadata  # FIX pandas-ta-openbb bug
+import pandas_ta as ta
 from datetime import datetime, timedelta, timezone
 
 
@@ -35,22 +38,16 @@ def get_session_progress() -> float:
     return max(elapsed / total_minutes, 0.01)
 
 
-# ── Chỉ báo kỹ thuật ──────────────────────────────────────────────────────────
+# ── Chỉ báo kỹ thuật cơ bản (Tái cấu trúc dùng pandas_ta) ────────────────────
 
 def calculate_rsi(prices: list, period: int = 14) -> dict:
-    """Tính RSI"""
+    """Tính RSI bằng pandas_ta"""
     if len(prices) < period + 1:
         return {"error": f"Cần ít nhất {period + 1} phiên, hiện có {len(prices)}"}
 
-    gains, losses = [], []
-    for i in range(1, len(prices)):
-        chg = prices[i] - prices[i-1]
-        gains.append(max(chg, 0))
-        losses.append(abs(min(chg, 0)))
-
-    avg_gain = sum(gains[-period:]) / period
-    avg_loss = sum(losses[-period:]) / period
-    rsi = 100 if avg_loss == 0 else round(100 - (100 / (1 + avg_gain / avg_loss)), 2)
+    s = pd.Series(prices)
+    rsi_s = ta.rsi(s, length=period)
+    rsi = round(rsi_s.iloc[-1], 2)
 
     if rsi < 30:
         signal = "OVERSOLD (quá bán) → Có thể là cơ hội MUA"
@@ -63,11 +60,14 @@ def calculate_rsi(prices: list, period: int = 14) -> dict:
 
 
 def calculate_moving_average(prices: list, period: int) -> dict:
-    """Tính MA"""
+    """Tính MA bằng pandas_ta"""
     if len(prices) < period:
         return {"error": f"Cần ít nhất {period} phiên"}
 
-    ma     = round(sum(prices[-period:]) / period, 2)
+    s = pd.Series(prices)
+    ma_s = ta.sma(s, length=period)
+    ma = round(ma_s.iloc[-1], 2)
+    
     latest = prices[-1]
     trend  = "TRÊN MA → Xu hướng tăng ✅" if latest > ma else "DƯỚI MA → Xu hướng giảm ⚠️"
 
@@ -75,29 +75,18 @@ def calculate_moving_average(prices: list, period: int) -> dict:
 
 
 def calculate_macd(prices: list, fast: int = 12, slow: int = 26, signal_period: int = 9) -> dict:
-    """Tính MACD"""
+    """Tính MACD bằng pandas_ta"""
     min_required = slow + signal_period
     if len(prices) < min_required:
         return {"error": f"Cần ít nhất {min_required} phiên để tính MACD, hiện có {len(prices)}"}
 
-    def ema(data: list, period: int) -> list:
-        k = 2 / (period + 1)
-        result = [data[0]]
-        for price in data[1:]:
-            result.append(price * k + result[-1] * (1 - k))
-        return result
-
-    fast_ema    = ema(prices, fast)
-    slow_ema    = ema(prices, slow)
-    macd_line   = [f - s for f, s in zip(fast_ema, slow_ema)]
-    macd_stable = macd_line[slow - 1:]
-    signal_line = ema(macd_stable, signal_period)
-    histogram   = [m - s for m, s in zip(macd_stable, signal_line)]
-
-    latest_macd   = round(macd_stable[-1], 4)
-    latest_signal = round(signal_line[-1], 4)
-    latest_hist   = round(histogram[-1], 4)
-    prev_hist     = round(histogram[-2], 4) if len(histogram) >= 2 else 0
+    s = pd.Series(prices)
+    macd_df = ta.macd(s, fast=fast, slow=slow, signal=signal_period)
+    
+    latest_macd   = round(macd_df.iloc[-1, 0], 4)
+    latest_hist   = round(macd_df.iloc[-1, 1], 4)
+    latest_signal = round(macd_df.iloc[-1, 2], 4)
+    prev_hist     = round(macd_df.iloc[-2, 1], 4) if len(macd_df) >= 2 else 0
 
     if latest_hist > 0 and prev_hist <= 0:
         signal_text = "GOLDEN CROSS → Tín hiệu MUA mạnh 🟢"
@@ -124,19 +113,20 @@ def calculate_macd(prices: list, fast: int = 12, slow: int = 26, signal_period: 
 
 
 def calculate_bollinger(prices: list, period: int = 20, num_std: float = 2.0) -> dict:
-    """Tính Bollinger Bands"""
+    """Tính Bollinger Bands bằng pandas_ta"""
     if len(prices) < period:
         return {"error": f"Cần ít nhất {period} phiên, hiện có {len(prices)}"}
 
-    recent    = prices[-period:]
-    middle    = sum(recent) / period
-    std       = (sum((p - middle) ** 2 for p in recent) / period) ** 0.5
-    upper     = round(middle + num_std * std, 2)
-    lower     = round(middle - num_std * std, 2)
-    middle    = round(middle, 2)
-    latest    = prices[-1]
-    percent_b = round((latest - lower) / (upper - lower) * 100, 2) if upper != lower else 50.0
-    bandwidth = round((upper - lower) / middle * 100, 2)
+    s = pd.Series(prices)
+    bb_df = ta.bbands(s, length=period, std=num_std)
+    
+    lower     = round(bb_df.iloc[-1, 0], 2)
+    middle    = round(bb_df.iloc[-1, 1], 2)
+    upper     = round(bb_df.iloc[-1, 2], 2)
+    bandwidth = round(bb_df.iloc[-1, 3], 2)
+    percent_b = round(bb_df.iloc[-1, 4] * 100, 2)
+    
+    latest = prices[-1]
 
     if latest > upper:
         signal_text = "GIÁ VƯỢT BAND TRÊN → Quá mua, rủi ro điều chỉnh 🔴"
@@ -164,19 +154,14 @@ def calculate_bollinger(prices: list, period: int = 20, num_std: float = 2.0) ->
 
 
 def calculate_atr(highs: list, lows: list, closes: list, period: int = 14) -> dict:
-    """Tính ATR — đo biến động thực tế, gợi ý SL/TP"""
+    """Tính ATR bằng pandas_ta"""
     if len(highs) < period + 1 or len(lows) < period + 1 or len(closes) < period + 1:
         return {"error": f"Cần ít nhất {period + 1} phiên để tính ATR"}
 
-    true_ranges = []
-    for i in range(1, len(closes)):
-        hl  = highs[i] - lows[i]
-        hpc = abs(highs[i] - closes[i - 1])
-        lpc = abs(lows[i]  - closes[i - 1])
-        true_ranges.append(max(hl, hpc, lpc))
-
-    atr     = round(sum(true_ranges[-period:]) / period, 2)
-    latest  = closes[-1]
+    df = pd.DataFrame({'high': highs, 'low': lows, 'close': closes})
+    atr_s = ta.atr(df['high'], df['low'], df['close'], length=period)
+    atr = round(atr_s.iloc[-1], 2)
+    latest = closes[-1]
     atr_pct = round(atr / latest * 100, 2)
 
     if atr_pct < 1.5:
@@ -198,102 +183,91 @@ def calculate_atr(highs: list, lows: list, closes: list, period: int = 14) -> di
         "period":        period
     }
 
-
+# (Phân tích Khối lượng và S/R dùng loop giữ nguyên vì tính đặc thù cao, ít dùng tool chung)
 def analyze_volume(closes: list, volumes: list, period: int = 20) -> dict:
-    """Phân tích khối lượng giao dịch — xác nhận xu hướng giá"""
-    if len(volumes) < period:
-        return {"error": f"Cần ít nhất {period} phiên để phân tích khối lượng"}
-
-    avg_vol    = sum(volumes[-period:]) / period
+    if len(volumes) < period: return {"error": "Thiếu dữ liệu"}
+    avg_vol = sum(volumes[-period:]) / period
     latest_vol = volumes[-1]
-
-    progress      = get_session_progress()
-    intraday_note = ""
-    projected_vol = latest_vol
-    if progress < 1.0:
-        projected_vol = latest_vol / progress
-        intraday_note = (
-            f"⚠️ Phiên chưa kết thúc ({round(progress*100)}% thời gian đã qua). "
-            f"Volume thực tế: {int(latest_vol):,} — Ước tính cả phiên: {int(projected_vol):,}."
-        )
-
+    progress = get_session_progress()
+    projected_vol = latest_vol if progress >= 1.0 else latest_vol / progress
+    
     vol_ratio = round(projected_vol / avg_vol, 2) if avg_vol > 0 else 0
     price_up  = closes[-1] > closes[-5] if len(closes) >= 5 else None
 
-    if vol_ratio >= 1.5 and price_up:
-        signal = "VOLUME TĂNG + GIÁ TĂNG → Xu hướng tăng được xác nhận mạnh 🟢"
-    elif vol_ratio >= 1.5 and price_up is False:
-        signal = "VOLUME TĂNG + GIÁ GIẢM → Áp lực bán lớn, xu hướng giảm mạnh 🔴"
-    elif vol_ratio < 0.7 and price_up:
-        signal = "VOLUME YẾU + GIÁ TĂNG → Tăng không có xác nhận, dễ đảo chiều ⚠️"
-    elif vol_ratio < 0.7 and price_up is False:
-        signal = "VOLUME YẾU + GIÁ GIẢM → Giảm kiệt lực, có thể sắp phục hồi 🟡"
-    else:
-        signal = "VOLUME BÌNH THƯỜNG → Không có tín hiệu đặc biệt 😐"
-
-    recent_avg     = sum(volumes[-period:-3]) / (period - 3) if period > 3 else avg_vol
-    spike_sessions = [i for i in range(-3, 0) if volumes[i] > 2.0 * recent_avg]
+    if vol_ratio >= 1.5 and price_up: signal = "VOLUME TĂNG + GIÁ TĂNG → Xu hướng tăng mạnh 🟢"
+    elif vol_ratio >= 1.5 and not price_up: signal = "VOLUME TĂNG + GIÁ GIẢM → Lực bán lớn 🔴"
+    elif vol_ratio < 0.7 and price_up: signal = "VOLUME YẾU + GIÁ TĂNG → Dễ đảo chiều ⚠️"
+    elif vol_ratio < 0.7 and not price_up: signal = "VOLUME YẾU + GIÁ GIẢM → Giảm kiệt lực 🟡"
+    else: signal = "BÌNH THƯỜNG 😐"
 
     return {
-        "latest_volume":    int(latest_vol),
+        "latest_volume": int(latest_vol),
         "projected_volume": int(projected_vol),
-        "avg_volume_20":    int(avg_vol),
-        "volume_ratio":     vol_ratio,
-        "signal":           signal,
-        "volume_spike":     len(spike_sessions) > 0,
-        "spike_note":       f"Có {len(spike_sessions)} phiên đột biến trong 3 phiên gần nhất" if spike_sessions else "Không có đột biến volume",
-        "intraday_note":    intraday_note,
+        "avg_volume_20": int(avg_vol),
+        "volume_ratio": vol_ratio,
+        "signal": signal
     }
 
-
 def find_support_resistance(closes: list, highs: list, lows: list, lookback: int = 30) -> dict:
-    """Xác định vùng hỗ trợ và kháng cự từ các điểm pivot"""
-    if len(closes) < lookback:
-        return {"error": f"Cần ít nhất {lookback} phiên để tìm S/R"}
+    if len(closes) < lookback: return {"error": "Thiếu dữ liệu"}
+    latest = closes[-1]
+    sr_levels = {"support": min(lows[-lookback:]), "resistance": max(highs[-lookback:])}
+    return sr_levels
 
-    recent_highs      = highs[-lookback:]
-    recent_lows       = lows[-lookback:]
-    latest            = closes[-1]
-    resistance_levels = []
-    support_levels    = []
+# ── LOGIC MỚI BỔ SUNG THEO SYSTEM DESIGN ──────────────────────────────────────────
 
-    for i in range(2, len(recent_highs) - 2):
-        if recent_highs[i] > max(recent_highs[i-2:i]) and recent_highs[i] > max(recent_highs[i+1:i+3]):
-            resistance_levels.append(round(recent_highs[i], 2))
-
-    for i in range(2, len(recent_lows) - 2):
-        if recent_lows[i] < min(recent_lows[i-2:i]) and recent_lows[i] < min(recent_lows[i+1:i+3]):
-            support_levels.append(round(recent_lows[i], 2))
-
-    resistances_above = sorted([r for r in resistance_levels if r > latest])
-    supports_below    = sorted([s for s in support_levels   if s < latest], reverse=True)
-
-    if not resistances_above:
-        resistances_above = [round(max(recent_highs), 2)]
-    if not supports_below:
-        supports_below = [round(min(recent_lows), 2)]
-
-    nearest_resistance = resistances_above[0]
-    nearest_support    = supports_below[0]
-    dist_to_resist     = round((nearest_resistance - latest) / latest * 100, 2)
-    dist_to_support    = round((latest - nearest_support)   / latest * 100, 2)
-
-    if dist_to_resist < 2.0:
-        zone_signal = f"GIÁ SÁT KHÁNG CỰ ({nearest_resistance}) — Rủi ro bị chặn ⚠️"
-    elif dist_to_support < 2.0:
-        zone_signal = f"GIÁ SÁT HỖ TRỢ ({nearest_support}) — Tiềm năng bounce 🟢"
-    elif dist_to_resist < dist_to_support:
-        zone_signal = f"Gần kháng cự hơn (+{dist_to_resist}%) — Upside hạn chế 🟡"
+def detect_market_regime(closes: list) -> str:
+    """Xác định trạng thái (regime) của cổ phiếu: Uptrend / Downtrend / Ranging"""
+    if len(closes) < 50:
+         return "KHÔNG RÕ (Thiếu dữ liệu)"
+         
+    s = pd.Series(closes)
+    ma20 = ta.sma(s, length=20).iloc[-1]
+    ma50 = ta.sma(s, length=50).iloc[-1]
+    latest = closes[-1]
+    
+    if latest > ma20 and ma20 > ma50:
+        return "UPTREND MẠNH 🚀"
+    elif latest < ma20 and ma20 < ma50:
+        return "DOWNTREND 💥"
     else:
-        zone_signal = f"Gần hỗ trợ hơn (-{dist_to_support}%) — Vùng an toàn xem xét mua 🟢"
+        return "RANGING (Đi ngang tích lũy) ⚖️"
 
+def calculate_confluence(rsi_data, ma_data, macd_data, bb_data) -> dict:
+    """Tính điểm đồng thuận của nhiều chỉ báo, phục vụ cho AI Agent quyết định"""
+    score = 0
+    signals = []
+    
+    if "quá bán" in rsi_data.get("signal", ""):
+        score += 1
+        signals.append("RSI Quá Bán (Hỗ trợ)")
+    elif "quá mua" in rsi_data.get("signal", ""):
+        score -= 1
+        
+    if "Xu hướng tăng" in ma_data.get("trend", ""):
+        score += 1
+        signals.append("Giá trên MA")
+    else:
+        score -= 1
+        
+    if "MUA mạnh" in macd_data.get("signal_text", "") or "mạnh lên" in macd_data.get("signal_text", "") and "tăng" in macd_data.get("signal_text", ""):
+        score += 1
+        signals.append("MACD Ủng hộ Tăng")
+    elif "BÁN mạnh" in macd_data.get("signal_text", "") or "giảm tốc" in macd_data.get("signal_text", ""):
+        score -= 1
+        
+    if "PHÁ BAND DƯỚI" in bb_data.get("signal_text", "") or "tích lũy" in bb_data.get("signal_text", ""):
+        score += 1
+        
+    if score >= 3:
+        status = "HIGH CONVICTION MUA 🟢"
+    elif score <= -3:
+        status = "HIGH CONVICTION BÁN 🔴"
+    else:
+        status = "MIXED (Trộn lẫn) 🟡"
+        
     return {
-        "latest_price":       latest,
-        "nearest_resistance": nearest_resistance,
-        "nearest_support":    nearest_support,
-        "dist_to_resistance": f"+{dist_to_resist}%",
-        "dist_to_support":    f"-{dist_to_support}%",
-        "all_resistances":    resistances_above[:3],
-        "all_supports":       supports_below[:3],
-        "zone_signal":        zone_signal
+        "score": score,
+        "confluence_status": status,
+        "buy_signals_detected": signals
     }

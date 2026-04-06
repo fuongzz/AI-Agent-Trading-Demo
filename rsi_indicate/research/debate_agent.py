@@ -59,7 +59,7 @@ Trả về JSON theo schema:
   "main_risk": "rủi ro chính nếu luận điểm sai"
 }}"""
 
-    raw = _call_claude(system, user)
+    raw = _call_claude(system, user).replace("```json", "").replace("```", "").strip()
     try:
         start = raw.find("{"); end = raw.rfind("}") + 1
         return json.loads(raw[start:end])
@@ -96,7 +96,7 @@ Trả về JSON theo schema:
   "main_bull_flaw": "điểm yếu lớn nhất trong luận điểm tăng"
 }}"""
 
-    raw = _call_claude(system, user)
+    raw = _call_claude(system, user).replace("```json", "").replace("```", "").strip()
     try:
         start = raw.find("{"); end = raw.rfind("}") + 1
         return json.loads(raw[start:end])
@@ -137,7 +137,7 @@ Trả về JSON theo schema:
   "uncertainty_level": "THẤP/TRUNG BÌNH/CAO"
 }}"""
 
-    raw = _call_claude(system, user, max_tokens=700)
+    raw = _call_claude(system, user, max_tokens=700).replace("```json", "").replace("```", "").strip()
     try:
         start = raw.find("{"); end = raw.rfind("}") + 1
         return json.loads(raw[start:end])

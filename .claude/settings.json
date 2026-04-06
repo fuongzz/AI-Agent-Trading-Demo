@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"from vnstock import Vnstock; s = Vnstock\\(\\).stock\\(symbol='VNM', source='VCI'\\); print\\(s.quote.history\\(start='2026-04-01', end='2026-04-04'\\).tail\\(\\)\\)\")",
+      "Bash(python -c ':*)"
+    ]
+  }
+}

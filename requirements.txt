@@ -13,3 +13,11 @@ python-dateutil==2.9.0.post0
 
 # Environment
 python-dotenv==1.2.2
+
+# Multi-Agent & Utils
+langgraph
+langchain-anthropic
+apscheduler
+
+# Indicators (Thế vnstock_ta)
+pandas-ta-openbb

@@ -1,216 +1,245 @@
 """
-orchestrator.py — Pipeline điều phối Multi-Agent
+orchestrator.py — Pipeline điều phối Multi-Agent bằng LangGraph
 Chạy: python orchestrator.py
 
 Luồng:
   [Input: mã CK]
        ↓
-  [Tầng I]  PTKT Agent      → PTKTReport (JSON)
+  [Tầng I - Multi-Agent] Chạy SONG SONG các Agent (TA, Sentiment, Market Context)
        ↓
-  [Tầng II] Debate Agent    → DebateSummary (Bull + Bear + Synthesize)
+  [Tầng II - Debate] Bull vs Bear Debate Agent
        ↓
-  [Tầng III] Trader Agent   → TraderDecision (MUA/BÁN/CHỜ + SL/TP + NAV%)
+  [Tầng III - Trader] Trader Agent ra quyết định thô
        ↓
-  [Output: in ra console + lưu file]
+  [Tầng IV - Risk] Risk Manager chốt kiểm duyệt cuối (Rule-based)
+       ↓
+  [Output] Lưu DB + In báo cáo.
 """
 
-import sys
-import io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
-sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8", errors="replace")
-
-import os, json
+import sys, os, json
+from typing import TypedDict
 from datetime import datetime
 from dotenv import load_dotenv
-load_dotenv()
 
 # Thêm thư mục gốc vào path để import được các module
 sys.path.insert(0, os.path.dirname(__file__))
 
-from analysts.ptkt_agent   import run as run_ptkt
-from research.debate_agent import run as run_debate
-from trader.trader_agent   import run as run_trader
-from fetcher               import fetch_realtime
-from indicators            import get_session_progress
+# Import LangGraph
+from langgraph.graph import StateGraph, START, END
 
+# Import các components cũ
+from analysts.ptkt_agent      import run as run_ptkt
+from research.debate_agent    import run as run_debate
+from research.sentiment_agent import run as run_sentiment
+from trader.trader_agent      import run as run_trader
+from fetcher                  import fetch_realtime, fetch_macro, fetch_foreign_flow
+from indicators               import get_session_progress
+from database                 import save_agent_decision
+from risk_manager             import evaluate_risk
+
+load_dotenv()
+
+# =====================================================================
+# 1. STATE BẢNG TRẮNG LANGGRAPH
+# =====================================================================
+class PipelineState(TypedDict):
+    symbol: str
+    ptkt_report: dict
+    sentiment: dict
+    macro: dict
+    foreign: dict
+    debate: dict
+    decision: dict
+
+# =====================================================================
+# 2. ĐỊNH NGHĨA CÁC NODE (AGENTS & MANAGERS)
+# =====================================================================
+
+def ta_agent_node(state: PipelineState) -> dict:
+    print(">>> 🧠 [TA Agent] Phân tích Kỹ thuật...")
+    report = run_ptkt(state["symbol"])
+    return {"ptkt_report": report or {}}
+
+def sentiment_agent_node(state: PipelineState) -> dict:
+    print(">>> 📰 [Sentiment Agent] Phân tích Tin tức (CafeF/VnExpress)...")
+    sent = run_sentiment(state["symbol"])
+    return {"sentiment": sent or {}}
+
+def market_agent_node(state: PipelineState) -> dict:
+    print(">>> 🌐 [Market Agent] Đo lường Vĩ mô và khối Ngoại...")
+    macro = fetch_macro()
+    foreign = fetch_foreign_flow(state["symbol"])
+    return {"macro": macro, "foreign": foreign}
+
+def debate_agent_node(state: PipelineState) -> dict:
+    print(">>> ⚔️ [Debate Agent] Tổ chức tranh luận Bull vs Bear...")
+    debate_res = run_debate(state["ptkt_report"])
+    return {"debate": debate_res or {}}
+
+def trader_agent_node(state: PipelineState) -> dict:
+    print(">>> 🧑‍💼 [Trader Agent] Xem xét chiến lược và ra quyết định...")
+    dec = run_trader(state["ptkt_report"], state["debate"], state["sentiment"])
+    return {"decision": dec or {}}
+
+def risk_manager_node(state: PipelineState) -> dict:
+    print(">>> 🛡️ [Risk Manager] Rà soát quy tắc an toàn cuối cùng...")
+    decision = state.get("decision", {})
+    action = decision.get("action", "CHỜ")
+    
+    # Lấy thông số môi trường
+    macro = state.get("macro", {})
+    foreign = state.get("foreign", {})
+    vnindex_change = macro.get("vnindex", {}).get("change_1d", 0)
+    foreign_room = foreign.get("room_usage_pct", 0)
+    
+    # Evaluate Risk
+    risk_assessment = evaluate_risk(
+        state["symbol"], 
+        action, 
+        vnindex_change, 
+        foreign_room, 
+        intraday_amplitude_pct=0 # Giả định demo
+    )
+    
+    # Đè quyết định nếu rủi ro vi phạm
+    decision["action"] = risk_assessment["final_action"]
+    decision["risk_override"] = risk_assessment["override_reason"]
+    
+    # Ghi nhận vào SQLite DB
+    today = datetime.now().strftime("%Y-%m-%d")
+    score = state.get("ptkt_report", {}).get("signals", {}).get("confluence", {}).get("score", 0)
+    save_agent_decision(state["symbol"], today, decision["action"], float(score), decision)
+    
+    return {"decision": decision}
+
+# =====================================================================
+# 3. KẾT NỐI SƠ ĐỒ (ORCHESTRATOR)
+# =====================================================================
+
+workflow = StateGraph(PipelineState)
+
+# Add Nodes
+workflow.add_node("TA", ta_agent_node)
+workflow.add_node("Sentiment", sentiment_agent_node)
+workflow.add_node("Market", market_agent_node)
+workflow.add_node("Debate", debate_agent_node)
+workflow.add_node("Trader", trader_agent_node)
+workflow.add_node("Risk", risk_manager_node)
+
+# Flow Song Song: TA, Sentiment, Market chạy cùng lúc.
+workflow.add_edge(START, "TA")
+workflow.add_edge(START, "Sentiment")
+workflow.add_edge(START, "Market")
+
+# Sau khi cả 3 chạy xong sẽ cùng đổ vào Debate
+workflow.add_edge(["TA", "Sentiment", "Market"], "Debate")
+
+workflow.add_edge("Debate", "Trader")
+workflow.add_edge("Trader", "Risk")
+workflow.add_edge("Risk", END)
+
+app = workflow.compile()
+
+
+# =====================================================================
+# 4. CHẠY THỰC TẾ & HIỂN THỊ
+# =====================================================================
 
 def run_pipeline(symbol: str, force: bool = False) -> dict:
-    symbol   = symbol.upper()
-    today    = datetime.now().strftime("%Y-%m-%d")
-    out_dir  = os.path.join(os.path.dirname(__file__), "output")
-    os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, f"{symbol}_{today}_pipeline.json")
-
-    print("\n" + "█"*60)
-    print(f"  MULTI-AGENT PIPELINE — {symbol}")
-    print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print("█"*60)
-
-    # ── Kiểm tra pipeline cache ───────────────────────────────────
-    if not force and os.path.exists(out_path):
-        print(f"\n[Cache] Pipeline đã chạy hôm nay → Load từ {out_path}")
-        with open(out_path, "r", encoding="utf-8") as f:
-            result = json.load(f)
-        _print_cached_result(result)
-        return result
-
+    symbol = symbol.upper()
     start = datetime.now()
-
-    # ── Tầng I: PTKT Agent ────────────────────────────────────────
-    print("\n>>> TẦNG I: PTKT AGENT")
-    ptkt_report = run_ptkt(symbol)
-    if not ptkt_report:
-        print("Pipeline dừng: PTKT Agent không trả được dữ liệu.")
-        return {}
-
-    # ── Tầng II: Debate Agent ─────────────────────────────────────
-    print("\n>>> TẦNG II: DEBATE AGENT (Bull vs Bear)")
-    debate = run_debate(ptkt_report)
-
-    # ── Tầng III: Trader Agent ────────────────────────────────────
-    print("\n>>> TẦNG III: TRADER AGENT")
-    decision = run_trader(ptkt_report, debate)
-
-    # ── Lưu kết quả ──────────────────────────────────────────────
+    
+    print("\n" + "█"*60)
+    print(f"  LANGGRAPH MULTI-AGENT PIPELINE — {symbol}")
+    print(f"  {start.strftime('%Y-%m-%d %H:%M:%S')}")
+    print("█"*60)
+    
+    # Chạy LangGraph
+    initial_state = {"symbol": symbol}
+    final_state = app.invoke(initial_state)
+    
     elapsed = round((datetime.now() - start).total_seconds(), 1)
-    result  = {
-        "symbol":      symbol,
-        "timestamp":   datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    
+    # Gộp thành Result dict tương thích hàm hiển thị
+    result = {
+        "symbol": symbol,
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "elapsed_sec": elapsed,
-        "ptkt_report": ptkt_report,
-        "debate":      debate,
-        "decision":    decision,
+        "ptkt_report": final_state.get("ptkt_report", {}),
+        "sentiment": final_state.get("sentiment", {}),
+        "debate": final_state.get("debate", {}),
+        "decision": final_state.get("decision", {})
     }
-
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
-
-    print(f"\n[Pipeline hoàn thành] {elapsed}s | Lưu → {out_path}")
+    
+    print(f"\n[Pipeline hoàn thành] {elapsed}s")
     _print_full_result(result)
     return result
 
 
 def _print_full_result(result: dict):
-    """In đầy đủ: giá, PTKT, debate, quyết định cuối."""
-    ptkt = result.get("ptkt_report", {})
-    p    = ptkt.get("price", {})
-    s    = ptkt.get("signals", {})
-    sr   = s.get("sr", {})
-    dbt  = result.get("debate", {})
-    bull = dbt.get("bull", {})
-    bear = dbt.get("bear", {})
-    syn  = dbt.get("summary", {})
-    d    = result.get("decision", {})
-    action = d.get("action", "?")
-    icon   = {"MUA": "🟢", "BÁN": "🔴", "CHỜ": "🟡"}.get(action, "")
-
-    print(f"\n{'█'*60}")
-    print(f"  KẾT QUẢ PHÂN TÍCH — {result.get('symbol')}  ({result.get('timestamp')})")
-    print(f"{'█'*60}")
-
-    # ── Giá ──────────────────────────────────────────────────────
-    print(f"\n  [ GIÁ ]")
-    print(f"  Công ty  : {ptkt.get('company')} ({ptkt.get('exchange')}, {ptkt.get('industry')})")
-    print(f"  Giá đóng : {p.get('latest')}  ({p.get('change_pct')}  |  {p.get('change')})")
-
-    # ── Phân tích kỹ thuật ────────────────────────────────────────
-    ma  = s.get("ma", {})
-    rsi = s.get("rsi", {})
-    mac = s.get("macd", {})
-    bol = s.get("bollinger", {})
-    vol = s.get("volume", {})
-    atr = s.get("atr", {})
-
-    print(f"\n  [ PHÂN TÍCH KỸ THUẬT ]")
-    print(f"  RSI      : {rsi.get('value')}  → {rsi.get('signal')}")
-    print(f"  MA5/MA20 : {ma.get('ma5')} / {ma.get('ma20')}  → {ma.get('trend')}  ({ma.get('cross')})")
-    print(f"  MACD     : {mac.get('signal_text')}")
-    print(f"  Bollinger: {bol.get('signal_text')}")
-    print(f"  Volume   : {vol.get('ratio')}x TB20  → {vol.get('signal')}")
-    print(f"  ATR      : {atr.get('volatility')}")
-    print(f"  Hỗ trợ  : {sr.get('support')}  |  Kháng cự: {sr.get('resistance')}")
-    print(f"  Vùng S/R : {sr.get('zone_signal')}")
-
-    # ── Debate ────────────────────────────────────────────────────
-    print(f"\n  [ DEBATE BULL vs BEAR ]")
-    print(f"  Bull (điểm {bull.get('score', '?')}) : {bull.get('thesis', bull.get('summary', ''))}")
-    print(f"  Bear (điểm {bear.get('score', '?')}) : {bear.get('thesis', bear.get('summary', ''))}")
-    print(f"  Dominant : {syn.get('dominant_side', '?')}  — {syn.get('consensus', '')}")
-
-    # ── Quyết định ────────────────────────────────────────────────
-    print(f"\n  [ QUYẾT ĐỊNH TRADER ]")
-    print(f"  {icon}  {action}  (Tin cậy: {d.get('confidence')})")
-    print(f"  Entry : {d.get('entry')}  |  SL: {d.get('sl')}  |  TP: {d.get('tp')}  |  NAV: {d.get('nav_pct')}%")
-    print(f"  Lý do : {d.get('reason')}")
-    print(f"{'█'*60}\n")
-
-
-def _realtime_check(symbol: str, result: dict):
-    """
-    Trong giờ giao dịch: fetch giá realtime, so sánh với SL/TP từ cache.
-    Không gọi lại LLM — chỉ kiểm tra giá có vi phạm ngưỡng không.
-    """
-    progress = get_session_progress()
-    if progress >= 1.0:
-        return  # Ngoài giờ giao dịch → bỏ qua
-
-    print("\n[Realtime Check] Đang trong giờ giao dịch, kiểm tra giá hiện tại...")
-    rt = fetch_realtime(symbol)
-
-    if "error" in rt or "note" in rt:
-        print(f"  Không lấy được giá realtime: {rt.get('error') or rt.get('note')}")
-        return
-
-    current = rt.get("realtime_price", 0)
-    d       = result.get("decision", {})
-    action  = d.get("action")
-    sl      = d.get("sl")
-    tp      = d.get("tp")
-    entry   = d.get("entry")
-
-    cached_price = result.get("ptkt_report", {}).get("price", {}).get("latest", 0)
-    change_pct   = round((current - cached_price) / cached_price * 100, 2) if cached_price else 0
-
-    print(f"  Giá cached: {cached_price} → Giá hiện tại: {current} ({'+' if change_pct >= 0 else ''}{change_pct}%)")
-
-    # Cảnh báo theo action
-    if action == "MUA" and sl and current <= sl:
-        print(f"  🔴 CẢNH BÁO: Giá ({current}) đã chạm/phá SL ({sl}) → Khuyến nghị MUA KHÔNG CÒN HIỆU LỰC")
-    elif action == "MUA" and tp and current >= tp:
-        print(f"  🎯 TP ĐẠT: Giá ({current}) đã chạm TP ({tp}) → Cân nhắc chốt lời")
-    elif action == "BÁN" and tp and current <= tp:
-        print(f"  🎯 TP ĐẠT: Giá ({current}) đã chạm TP ({tp}) → Cân nhắc chốt lời")
-    elif action == "BÁN" and sl and current >= sl:
-        print(f"  🔴 CẢNH BÁO: Giá ({current}) đã chạm/phá SL ({sl}) → Khuyến nghị BÁN KHÔNG CÒN HIỆU LỰC")
-    elif entry and abs(change_pct) >= 3.0:
-        print(f"  ⚠️  Giá biến động mạnh ({change_pct}%) so với lúc phân tích → Nên chạy lại pipeline")
-    else:
-        print(f"  ✅ Giá trong vùng bình thường — Khuyến nghị vẫn còn hiệu lực")
-
-    print(f"  Thời điểm: {rt.get('time')} | Volume realtime: {rt.get('volume', 0):,}")
-
-
-def _print_cached_result(result: dict):
-    """In lại kết quả từ cache, sau đó chạy realtime check nếu trong giờ GD."""
+    """In báo cáo đầy đủ cho người dùng tự phân tích và quyết định."""
+    ptkt   = result.get("ptkt_report", {})
+    p      = ptkt.get("price", {})
+    s      = ptkt.get("signals", {})
+    sr     = s.get("sr", {})
+    ma     = s.get("ma", {})
+    rsi    = s.get("rsi", {})
+    mac    = s.get("macd", {})
+    vol    = s.get("volume", {})
+    dbt    = result.get("debate", {})
+    bull   = dbt.get("bull", {})
+    bear   = dbt.get("bear", {})
+    syn    = dbt.get("summary", {})
+    snt    = result.get("sentiment", {})
     d      = result.get("decision", {})
+    
     action = d.get("action", "?")
     icon   = {"MUA": "🟢", "BÁN": "🔴", "CHỜ": "🟡"}.get(action, "")
-    debate = result.get("debate", {}).get("summary", {})
-    print(f"\n{'='*60}")
-    print(f"  KẾT QUẢ (từ cache — {result.get('timestamp')})")
-    print(f"  Bull: {result.get('debate', {}).get('bull', {}).get('score')} | Bear: {result.get('debate', {}).get('bear', {}).get('score')} | Dominant: {debate.get('dominant_side')}")
-    print(f"  QUYẾT ĐỊNH: {icon} {action}  (Tin cậy: {d.get('confidence')})")
-    print(f"  Entry: {d.get('entry')} | SL: {d.get('sl')} | TP: {d.get('tp')} | NAV: {d.get('nav_pct')}%")
-    print(f"  Lý do: {d.get('reason')}")
-    print(f"{'='*60}")
-    _realtime_check(result.get("symbol", ""), result)
+    W      = 62
+
+    print(f"\n{'█'*W}")
+    print(f"  BÁO CÁO PHÂN TÍCH — {result.get('symbol')}")
+    print(f"{'█'*W}")
+
+    print(f"\n  ▌ TÍN HIỆU ĐỒNG THUẬN (CONFLUENCE)")
+    print(f"  {'─'*58}")
+    print(f"  RSI: {rsi.get('signal')}")
+    print(f"  MA:  {ma.get('trend')} | MACD: {mac.get('signal_text')}")
+    print(f"  Vol: {vol.get('ratio')}x TB20 → {vol.get('signal')}")
+
+    print(f"\n  ▌ TÔNG TIN TỨC (SENTIMENT)")
+    print(f"  {'─'*58}")
+    if snt and not snt.get("error"):
+        print(f"  Tâm lý: {snt.get('overall_sentiment')} ({snt.get('sentiment_score')}/100)")
+        print(f"  Tóm tắt: {snt.get('sentiment_summary', '')[:100]}...")
+    else:
+        print("  Không khả dụng.")
+
+    print(f"\n  ▌ DEBATE (BULL VS BEAR)")
+    print(f"  {'─'*58}")
+    if dbt:
+        print(f"  Bull ({bull.get('score', 0)}/100): {bull.get('top_reasons', [''])[0]}")
+        print(f"  Bear ({bear.get('score', 0)}/100): {bear.get('top_risks', [''])[0]}")
+        print(f"  Chốt: {syn.get('market_context', '')}")
+    else:
+        print("  Không khả dụng.")
+
+    print(f"\n  ▌ KHUYẾN NGHỊ CUỐI CÙNG TỪ HỆ THỐNG")
+    print(f"  {'─'*58}")
+    print(f"  {icon} Hành động : {action}")
+    if d.get("risk_override"):
+         print(f"  🛡️ CHẶN RỦI RO: {d.get('risk_override')}")
+    else:
+         print(f"  Vào lệnh: {d.get('entry')} | SL: {d.get('sl')} | TP: {d.get('tp')}")
+         print(f"  Lý do: {d.get('reason')}")
+
+    print(f"{'█'*W}\n")
 
 
 if __name__ == "__main__":
     print("""
-MULTI-AGENT TRADING SYSTEM — VN100
-Tầng I: PTKT Agent → Tầng II: Bull/Bear Debate → Tầng III: Trader Decision
+MULTI-AGENT TRADING SYSTEM (LANGGRAPH ENABLED)
+Tầng I: Parallel Agents → Tầng II: Debate → Tầng III: Trader → Tầng IV: Risk
     """)
     symbol = input("Nhập mã cổ phiếu (vd: VNM): ").strip().upper() or "VNM"
-    force  = input("Chạy lại (bỏ qua cache)? (y/N): ").strip().lower() == "y"
-    run_pipeline(symbol, force=force)
+    run_pipeline(symbol)
