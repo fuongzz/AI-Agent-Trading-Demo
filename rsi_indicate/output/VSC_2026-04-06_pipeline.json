@@ -1,0 +1,119 @@
+{
+  "symbol": "VSC",
+  "timestamp": "2026-04-06 07:14:01",
+  "elapsed_sec": 58.1,
+  "ptkt_report": {
+    "symbol": "VSC",
+    "date": "66",
+    "company": "N/A",
+    "exchange": "N/A",
+    "industry": "N/A",
+    "price": {
+      "latest": 23.8,
+      "change": "-0.5",
+      "change_pct": "-2.06%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 37.7,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 23.87,
+        "ma20": 24.09,
+        "trend": "GIẢM",
+        "cross": "NONE"
+      },
+      "macd": {
+        "macd": -0.0057,
+        "signal": 0.1106,
+        "histogram": -0.1163,
+        "signal_text": "MACD âm nhưng đang phục hồi"
+      },
+      "bollinger": {
+        "upper": 26.07,
+        "middle": 24.09,
+        "lower": 22.1,
+        "percent_b": 42.82,
+        "signal_text": "Giá dưới middle band, xu hướng giảm"
+      },
+      "atr": {
+        "value": 0.92,
+        "volatility": "CAO"
+      },
+      "volume": {
+        "ratio": 0.72,
+        "signal": "BÌNH THƯỜNG"
+      },
+      "sr": {
+        "support": 22.85,
+        "resistance": 26.25,
+        "zone_signal": "Gần hỗ trợ, vùng an toàn xem xét mua"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 22.85,
+      "sl": 22.42,
+      "tp": 25.64,
+      "confidence": "TRUNG BÌNH",
+      "reason": "Giá gần vùng hỗ trợ với RSI trung tính. Chờ MACD phục hồi và xác nhận tín hiệu mua trước khi vào lệnh."
+    }
+  },
+  "debate": {
+    "symbol": "VSC",
+    "bull": {
+      "stance": "BULL",
+      "score": 62,
+      "top_reasons": [
+        "Giá hiện tại 23.8 gần vùng hỗ trợ 22.85, tạo điều kiện mua với rủi ro xác định rõ ràng",
+        "MACD đang phục hồi (histogram -0.1163 từ mức âm sâu hơn), tín hiệu momentum sắp đảo chiều tích cực",
+        "RSI 37.7 trong vùng oversold nhẹ, chỉ ra tiềm năng phục hồi và không có quá bán cực độ",
+        "Volatility cao (ATR 0.92) cung cấp cơ hội lợi nhuận lớn khi giá phục hồi từ vùng hỗ trợ",
+        "Percent_B 42.82 cho thấy giá đang tích lũy gần middle band, không ở dưới cùng, hỗ trợ khả năng bounce",
+        "Khoảng cách từ giá hiện tại đến kháng cự 26.25 là 2.45 (10.3%), mục tiêu lợi nhuận khá tốt"
+      ],
+      "entry_suggestion": 22.95,
+      "tp_target": 25.8,
+      "main_risk": "Xu hướng chính vẫn GIẢM với MA5 < MA20, nếu giá phá vỡ dưới 22.85 sẽ kích hoạt bán tháo mạnh tiếp theo. Volume BÌNH THƯỜNG làm nghi ngờ sức mua thực, khả năng phục hồi có thể bị cản trở"
+    },
+    "bear": {
+      "stance": "BEAR",
+      "score": 72,
+      "top_risks": [
+        "Xu hướng giảm rõ ràng: MA5 < MA20, giá dưới middle band Bollinger, không có tín hiệu crossover phục hồi",
+        "MACD âm với histogram -0.1163 cho thấy động lực giảm mạnh, mặc dù signal bắt đầu phục hồi nhưng chưa cắt zero",
+        "RSI ở 37.7 vùng trung lập hướng xuống, chưa đạt oversold (< 30) để tạo bounce mạnh, còn rủi ro tiếp tục test support",
+        "Volatility cao (ATR = 0.92) trong bối cảnh xu hướng giảm tăng rủi ro giảm sốc, khả năng break support 22.85 cao",
+        "Volume ratio 0.72 thấp - không có khối lượng hỗ trợ phục hồi, tín hiệu yếu cho rally rebound"
+      ],
+      "sl_suggestion": 26.8,
+      "downside_target": 21.2,
+      "main_bull_flaw": "Lý do tăng giá chủ yếu dựa vào 'vùng an toàn gần support' là yếu và nguy hiểm - support có thể bị phá vỡ trong thị trường biến động cao, và MACD/MA trend không cho tín hiệu phục hồi thực sự, chỉ là lực cầu yếu ở vùng dưới"
+    },
+    "summary": {
+      "bull_score": 62,
+      "bear_score": 72,
+      "dominant_side": "BEAR",
+      "key_agreement": "Cả hai bên đều thừa nhận: (1) Xu hướng ngắn hạn đang hướng xuống với MA5 < MA20, (2) MACD vẫn trong vùng âm, (3) Volatility cao (ATR 0.92) tạo rủi ro lớn, (4) Volume thấp/bình thường không hỗ trợ mạnh mẽ",
+      "key_disagreement": "Bull nhấn mạnh cơ hội bounce từ support 22.85 + MACD bắt đầu phục hồi + RSI oversold nhẹ = lợi nhuận 10.3%, trong khi Bear cảnh báo support có thể bị phá vỡ, RSI chưa đủ oversold (37.7 > 30) để tạo bounce thực sự, và MACD chưa cắt zero line",
+      "bull_strongest_point": "Vị trí giá 23.8 gần support 22.85 tạo điều kiện entry với rủi ro xác định rõ (stop ~22.85), kết hợp MACD histogram đang phục hồi từ mức âm sâu hơn cho thấy khả năng đảo chiều momentum",
+      "bear_strongest_point": "RSI ở 37.7 chưa đạt oversold thực sự (< 30) để justify bounce, MACD histogram âm và chưa cắt zero line, combined với volume thấp (0.72) và downtrend MA5 < MA20 - không có confirmation mạnh cho phục hồi, rủi ro break support 22.85 cao trong bối cảnh volatility cao",
+      "market_context": "VSC đang trong downtrend xác nhận với MA cross, RSI chưa đủ oversold, và MACD chưa tái tích cực. Giá gần support nhưng thiếu tín hiệu reversal mạnh mẽ - đây là vùng trung lập/nguy hiểm chứ không phải đột phá phục hồi rõ ràng.",
+      "uncertainty_level": "CAO"
+    }
+  },
+  "decision": {
+    "symbol": "VSC",
+    "action": "CHỜ",
+    "entry": null,
+    "sl": null,
+    "tp": null,
+    "risk_reward": null,
+    "nav_pct": 0,
+    "holding_period": null,
+    "confidence": "THẤP",
+    "reason": "VSC đang ở vùng trung lập/nguy hiểm với Bear score 72 > Bull score 62. RSI 37.7 chưa đạt oversold thực sự (<30), MACD vẫn âm và chưa cắt zero line - thiếu tín hiệu reversal mạnh để justify entry. Volume thấp 0.72 kết hợp ATR cao cho thấy rủi ro tăng mạnh nếu break support 22.85. Chờ confirmation rõ ràng hơn trước khi hành động.",
+    "invalidation": "Nếu giá break xuống dưới support 22.85 với volume tăng, hoặc ngược lại: RSI vào oversold thực sự (<30) + MACD histogram cắt zero line với volume confirm thì có thể xem xét entry MUA lại."
+  }
+}

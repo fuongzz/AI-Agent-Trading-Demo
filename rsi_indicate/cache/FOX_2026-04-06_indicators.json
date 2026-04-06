@@ -1,0 +1,95 @@
+{
+  "company": {
+    "symbol": "FOX",
+    "company": "N/A",
+    "industry": "N/A",
+    "exchange": "N/A",
+    "source": "Vnstock company info"
+  },
+  "price_info": {
+    "symbol": "FOX",
+    "date": "66",
+    "latest": 81.5,
+    "open": 84.5,
+    "high": 85.1,
+    "low": 78.8,
+    "volume": 408400,
+    "change": -3.1,
+    "change_pct": "-3.66%"
+  },
+  "realtime": {
+    "error": "Lỗi realtime: RetryError[<Future at 0x29bf66eb4d0 state=finished raised ValueError>] — Thử ngoài giờ giao dịch"
+  },
+  "rsi": {
+    "rsi": 61.46,
+    "signal": "NEUTRAL (trung tính) → Chờ thêm tín hiệu",
+    "period": 14
+  },
+  "ma5": {
+    "ma": 85.48,
+    "latest_price": 81.5,
+    "trend": "DƯỚI MA → Xu hướng giảm ⚠️",
+    "period": 5
+  },
+  "ma20": {
+    "ma": 79.0,
+    "latest_price": 81.5,
+    "trend": "TRÊN MA → Xu hướng tăng ✅",
+    "period": 20
+  },
+  "macd": {
+    "macd": 1.6486,
+    "signal": 0.8922,
+    "histogram": 0.7565,
+    "signal_text": "MACD giảm tốc → Đà tăng đang yếu dần ⚠️",
+    "fast": 12,
+    "slow": 26,
+    "signal_period": 9
+  },
+  "bollinger": {
+    "upper": 90.01,
+    "middle": 79.0,
+    "lower": 67.99,
+    "latest_price": 81.5,
+    "percent_b": 61.35,
+    "bandwidth": 27.87,
+    "signal_text": "GIÁ TRÊN MIDDLE BAND → Xu hướng tăng ✅",
+    "period": 20
+  },
+  "atr": {
+    "atr": 4.57,
+    "atr_pct": "5.61%",
+    "latest_price": 81.5,
+    "volatility": "RẤT CAO — Rủi ro lớn, nên giảm khối lượng giao dịch 🔴",
+    "sl_suggestion": 74.64,
+    "tp_suggestion": 90.64,
+    "period": 14
+  },
+  "volume": {
+    "latest_volume": 408400,
+    "projected_volume": 408400,
+    "avg_volume_20": 387510,
+    "volume_ratio": 1.05,
+    "signal": "VOLUME BÌNH THƯỜNG → Không có tín hiệu đặc biệt 😐",
+    "volume_spike": false,
+    "spike_note": "Không có đột biến volume",
+    "intraday_note": ""
+  },
+  "support_resistance": {
+    "latest_price": 81.5,
+    "nearest_resistance": 85.0,
+    "nearest_support": 72.3,
+    "dist_to_resistance": "+4.29%",
+    "dist_to_support": "-11.29%",
+    "all_resistances": [
+      85.0,
+      89.5
+    ],
+    "all_supports": [
+      72.3,
+      70.3,
+      65.0
+    ],
+    "zone_signal": "Gần kháng cự hơn (+4.29%) — Upside hạn chế 🟡"
+  }
+}

@@ -76,6 +76,7 @@ Bức tranh thị trường: {debate.get("summary", {}).get("market_context")}
     response = client.messages.create(
         model=MODEL,
         max_tokens=600,
+        temperature=0,
         system=system,
         messages=[{"role": "user", "content": user}]
     )

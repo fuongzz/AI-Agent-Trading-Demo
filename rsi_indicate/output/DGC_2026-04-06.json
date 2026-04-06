@@ -1,0 +1,58 @@
+{
+  "symbol": "DGC",
+  "date": "66",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 56.5,
+    "change": "2.5",
+    "change_pct": "4.63%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 27.23,
+      "signal": "OVERSOLD"
+    },
+    "ma": {
+      "ma5": 52.06,
+      "ma20": 61.4,
+      "trend": "GIẢM",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": -4.8886,
+      "signal": -4.449,
+      "histogram": -0.4397,
+      "signal_text": "MACD âm nhưng đang phục hồi"
+    },
+    "bollinger": {
+      "upper": 82.98,
+      "middle": 61.4,
+      "lower": 39.82,
+      "percent_b": 38.65,
+      "signal_text": "Giá dưới middle band, xu hướng giảm"
+    },
+    "atr": {
+      "value": 3.58,
+      "volatility": "RẤT CAO"
+    },
+    "volume": {
+      "ratio": 1.08,
+      "signal": "Volume bình thường, không có tín hiệu đặc biệt"
+    },
+    "sr": {
+      "support": 48.25,
+      "resistance": 76.9,
+      "zone_signal": "Gần hỗ trợ hơn, vùng an toàn xem xét mua"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 51.13,
+    "sl": 48.25,
+    "tp": 63.66,
+    "confidence": "THẤP",
+    "reason": "RSI quá bán có tín hiệu mua nhưng giá vẫn dưới MA20, volatility rất cao cần thận trọng. Chờ MACD phục hồi hoàn toàn trước khi vào vị thế."
+  }
+}

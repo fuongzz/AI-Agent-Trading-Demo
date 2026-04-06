@@ -1,0 +1,58 @@
+{
+  "symbol": "FOX",
+  "date": "66",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 81.5,
+    "change": "-3.1",
+    "change_pct": "-3.66%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 61.46,
+      "signal": "NEUTRAL"
+    },
+    "ma": {
+      "ma5": 85.48,
+      "ma20": 79.0,
+      "trend": "HỖNHỢP",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": 1.6486,
+      "signal": 0.8922,
+      "histogram": 0.7565,
+      "signal_text": "MACD giảm tốc — Đà tăng đang yếu dần"
+    },
+    "bollinger": {
+      "upper": 90.01,
+      "middle": 79.0,
+      "lower": 67.99,
+      "percent_b": 61.35,
+      "signal_text": "Giá trên middle band — Xu hướng tăng"
+    },
+    "atr": {
+      "value": 4.57,
+      "volatility": "RẤT CAO"
+    },
+    "volume": {
+      "ratio": 1.05,
+      "signal": "BÌNH THƯỜNG"
+    },
+    "sr": {
+      "support": 72.3,
+      "resistance": 85.0,
+      "zone_signal": "Gần kháng cự hơn — Upside hạn chế"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 81.5,
+    "sl": 74.64,
+    "tp": 90.64,
+    "confidence": "TRUNG BÌNH",
+    "reason": "Tín hiệu hỗn hợp: MA5 giảm nhưng MA20 tăng, MACD yếu dần, volatility rất cao. Cần chờ xác nhận trước khi vào lệnh."
+  }
+}

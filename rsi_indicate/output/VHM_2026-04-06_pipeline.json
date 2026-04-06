@@ -1,0 +1,117 @@
+{
+  "symbol": "VHM",
+  "timestamp": "2026-04-06 07:15:44",
+  "elapsed_sec": 50.6,
+  "ptkt_report": {
+    "symbol": "VHM",
+    "date": "66",
+    "company": "N/A",
+    "exchange": "N/A",
+    "industry": "N/A",
+    "price": {
+      "latest": 119.2,
+      "change": "+1.3",
+      "change_pct": "+1.1%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 78.24,
+        "signal": "OVERBOUGHT"
+      },
+      "ma": {
+        "ma5": 110.66,
+        "ma20": 101.65,
+        "trend": "TĂNG",
+        "cross": "NONE"
+      },
+      "macd": {
+        "macd": 2.6497,
+        "signal": 0.1742,
+        "histogram": 2.4755,
+        "signal_text": "MACD tăng tốc → Đà tăng đang mạnh lên"
+      },
+      "bollinger": {
+        "upper": 116.34,
+        "middle": 101.65,
+        "lower": 86.95,
+        "percent_b": 109.73,
+        "signal_text": "GIÁ VƯỢT BAND TRÊN → Quá mua, rủi ro điều chỉnh"
+      },
+      "atr": {
+        "value": 4.7,
+        "volatility": "CAO"
+      },
+      "volume": {
+        "ratio": 1.1,
+        "signal": "VOLUME BÌNH THƯỜNG"
+      },
+      "sr": {
+        "support": 93.0,
+        "resistance": 125.0,
+        "zone_signal": "Gần kháng cự hơn (+4.87%) — Upside hạn chế"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 117.5,
+      "sl": 112.15,
+      "tp": 128.6,
+      "confidence": "TRUNG BÌNH",
+      "reason": "RSI quá mua (78.24) và giá vượt Bollinger Band trên, dù MACD mạnh nhưng cần chờ tín hiệu điều chỉnh. Có thể vào lại quanh MA5 hoặc support 93."
+    }
+  },
+  "debate": {
+    "symbol": "VHM",
+    "bull": {
+      "stance": "BULL",
+      "score": 72,
+      "top_reasons": [
+        "MACD tăng tốc mạnh với histogram dương 2.4755 → Đà tăng momentum đang gia tốc, tín hiệu bullish rõ ràng",
+        "Moving Average trend tăng (MA5 110.66 > MA20 101.65) → Cấu trúc giá trên trên dưới, xu hướng tăng được xác nhận",
+        "Volatility cao (ATR 4.7) kết hợp giá gần kháng cự → Khả năng breakthrough vượt 125.0 có thể xảy ra với thanh khoản đủ",
+        "RSI 78.24 overbought nhưng MACD vẫn tăng tốc → Chỉ báo phục hồi mạnh hơn dấu hiệu quá mua, xu hướng còn sức bật"
+      ],
+      "entry_suggestion": 116.5,
+      "tp_target": 128.5,
+      "main_risk": "Giá quá gần kháng cự (chỉ +4.87%), RSI overbought cảnh báo điều chỉnh ngắn hạn xuống 110-113, xác suất pullback trước khi breakthrough 125 là cao. Nếu vỡ hỗ trợ 113 có thể giảm về 93.0 (-22%)"
+    },
+    "bear": {
+      "stance": "BEAR",
+      "score": 72,
+      "top_risks": [
+        "RSI ở mức 78.24 (OVERBOUGHT) - Điều chỉnh giảm rất khả năng trong ngắn hạn",
+        "Giá vượt Bollinger Band trên (percent_b: 109.73) - Tín hiệu quá mua cực độ, rủi ro đảo chiều cao",
+        "Giá ở vùng kháng cự mạnh (125.0) chỉ cách 5.8 điểm - Upside bị giới hạn, downside lớn hơn",
+        "Volatility cao (ATR: 4.7) kết hợp RSI overbought - Tạo môi trường thuận lợi cho pullback mạnh",
+        "Volume tỉ lệ chỉ 1.1 (bình thường) trong khi giá ở đỉnh - Thiếu sức mạnh xác nhận, dễ bị bán tháo"
+      ],
+      "sl_suggestion": 122.5,
+      "downside_target": 105.0,
+      "main_bull_flaw": "MACD tăng tốc và trend MA5>MA20 chỉ là quán tính, không phải điều chỉnh nền tảng. RSI overbought 78.24 cảnh báo rằng sức mua đã cạn kiệt, trong khi giá đã chạm gần kháng cự 125.0 với volume yếu - đây là setup điển hình của pullback sau rally. Không có xác nhận bullish mạnh từ volume, và Bollinger Band trên bị vượt quá chỉ ra khả năng mean reversion cao."
+    },
+    "summary": {
+      "bull_score": 72,
+      "bear_score": 72,
+      "dominant_side": "NEUTRAL",
+      "key_agreement": "Cả hai bên đều thừa nhận RSI ở mức overbought 78.24 và volatility cao 4.7 tạo ra rủi ro điều chỉnh ngắn hạn. Cả hai cũng nhất trí giá đang ở gần kháng cự 125.0 với upside bị giới hạn.",
+      "key_disagreement": "Bull nhấn mạnh MACD tăng tốc và MA trend vẫn duy trì sức bật, coi RSI overbought chỉ là tín hiệu quá mua tạm thời trong một xu hướng mạnh. Bear lập luận rằng MACD/MA chỉ là quán tính, volume yếu (1.1) không xác nhận, và setup hiện tại là điển hình của pullback sau rally tức là mean reversion sắp xảy ra.",
+      "bull_strongest_point": "MACD histogram dương 2.4755 và gia tốc, kết hợp MA5 > MA20, cho thấy động lực tăng vẫn hoạt động — Bull lập luận rằng overbought RSI chỉ là quán tính trong một uptrend mạnh, không phải cảnh báo đảo chiều toàn bộ.",
+      "bear_strongest_point": "Bollinger Band trên bị vượt (percent_b: 109.73) kết hợp volume chỉ ở mức bình thường 1.1 trong khi giá ở đỉnh — đây là dấu hiệu điển hình thiếu xác nhận thanh khoản để breakthrough, tăng xác suất mean reversion và pullback.",
+      "market_context": "VHM đang ở trạng thái \"peak uncertainty\" — giá vượt Bollinger Band trên, RSI overbought cực độ, nhưng momentum chỉ báo vẫn tăng tốc. Trường hợp này có thể là breakthrough cuối cùng trước khi điều chỉnh, hoặc là pullback sau rally trong bối cảnh volume yếu.",
+      "uncertainty_level": "CAO"
+    }
+  },
+  "decision": {
+    "symbol": "VHM",
+    "action": "CHỜ",
+    "entry": 0.0,
+    "sl": 0.0,
+    "tp": 0.0,
+    "risk_reward": 0.0,
+    "nav_pct": 0,
+    "holding_period": "N/A",
+    "confidence": "THẤP",
+    "reason": "VHM đang ở peak uncertainty với RSI extreme overbought (78.24) kết hợp Bollinger Band vượt trên cùng volume yếu (1.1) — không đủ xác nhận để breakthrough. Bull case (MACD tăng tốc) bị nước ngoài cân bằng bởi Bear case (thiếu thanh khoản ở đỉnh). Quyết định CHỜ là cần thiết để tránh FOMOvào pullback hoặc để xác nhận breakout thực sự.",
+    "invalidation": "Nếu giá giữ trên 125.0 (kháng cự) với volume tăng >1.5x thì xem xét MUA. Nếu giá quay xuống 115.0 hoặc RSI rơi dưới 70 thì có thể SHORT với SL 119.5, TP 110.0 (R/R 1:2.7). Nếu volume collapse hoặc VN-Index sụt quá -3% thì tăng cảnh báo pullback."
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "symbol": "VHM",
+  "date": "66",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 119.2,
+    "change": "+1.3",
+    "change_pct": "+1.1%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 78.24,
+      "signal": "OVERBOUGHT"
+    },
+    "ma": {
+      "ma5": 110.66,
+      "ma20": 101.65,
+      "trend": "TĂNG",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": 2.6497,
+      "signal": 0.1742,
+      "histogram": 2.4755,
+      "signal_text": "MACD tăng tốc → Đà tăng đang mạnh lên"
+    },
+    "bollinger": {
+      "upper": 116.34,
+      "middle": 101.65,
+      "lower": 86.95,
+      "percent_b": 109.73,
+      "signal_text": "GIÁ VƯỢT BAND TRÊN → Quá mua, rủi ro điều chỉnh"
+    },
+    "atr": {
+      "value": 4.7,
+      "volatility": "CAO"
+    },
+    "volume": {
+      "ratio": 1.1,
+      "signal": "VOLUME BÌNH THƯỜNG"
+    },
+    "sr": {
+      "support": 93.0,
+      "resistance": 125.0,
+      "zone_signal": "Gần kháng cự hơn (+4.87%) — Upside hạn chế"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 117.5,
+    "sl": 112.15,
+    "tp": 128.6,
+    "confidence": "TRUNG BÌNH",
+    "reason": "RSI quá mua (78.24) và giá vượt Bollinger Band trên, dù MACD mạnh nhưng cần chờ tín hiệu điều chỉnh. Có thể vào lại quanh MA5 hoặc support 93."
+  }
+}

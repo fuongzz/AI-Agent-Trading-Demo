@@ -1,0 +1,35 @@
+[
+  {
+    "date": "2026-04-06",
+    "price": {
+      "latest": 141.0,
+      "change": "1.1",
+      "change_pct": "0.79%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 46.23,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 137.28,
+        "ma20": 138.36,
+        "trend": "TĂNG",
+        "cross": "NONE"
+      },
+      "macd": "MACD tăng tốc → Đà tăng đang mạnh lên",
+      "volume": {
+        "ratio": 0.74,
+        "signal": "BÌNH THƯỜNG"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 141.0,
+      "sl": 129.62,
+      "tp": 156.18,
+      "confidence": "TRUNG BÌNH",
+      "reason": "Xu hướng tăng nhưng volatility rất cao và gần kháng cự. RSI trung tính cần xác nhận thêm trước khi vào lệnh."
+    }
+  }
+]

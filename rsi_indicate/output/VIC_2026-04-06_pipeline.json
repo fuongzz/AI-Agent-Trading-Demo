@@ -1,0 +1,119 @@
+{
+  "symbol": "VIC",
+  "timestamp": "2026-04-06 07:30:27",
+  "elapsed_sec": 50.1,
+  "ptkt_report": {
+    "symbol": "VIC",
+    "date": "66",
+    "company": "N/A",
+    "exchange": "N/A",
+    "industry": "N/A",
+    "price": {
+      "latest": 141.0,
+      "change": "1.1",
+      "change_pct": "0.79%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 46.23,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 137.28,
+        "ma20": 138.36,
+        "trend": "TĂNG",
+        "cross": "NONE"
+      },
+      "macd": {
+        "macd": -3.79,
+        "signal": -4.8477,
+        "histogram": 1.0578,
+        "signal_text": "MACD tăng tốc → Đà tăng đang mạnh lên"
+      },
+      "bollinger": {
+        "upper": 153.14,
+        "middle": 138.36,
+        "lower": 123.58,
+        "percent_b": 58.93,
+        "signal_text": "GIÁ TRÊN MIDDLE BAND → Xu hướng tăng"
+      },
+      "atr": {
+        "value": 7.59,
+        "volatility": "RẤT CAO"
+      },
+      "volume": {
+        "ratio": 0.74,
+        "signal": "BÌNH THƯỜNG"
+      },
+      "sr": {
+        "support": 122.8,
+        "resistance": 156.0,
+        "zone_signal": "Gần kháng cự hơn (+10.64%) — Upside hạn chế"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 141.0,
+      "sl": 129.62,
+      "tp": 156.18,
+      "confidence": "TRUNG BÌNH",
+      "reason": "Xu hướng tăng nhưng volatility rất cao và gần kháng cự. RSI trung tính cần xác nhận thêm trước khi vào lệnh."
+    }
+  },
+  "debate": {
+    "symbol": "VIC",
+    "bull": {
+      "stance": "BULL",
+      "score": 68,
+      "top_reasons": [
+        "MACD tăng tốc với histogram dương (1.0578) — Momentum phục hồi mạnh, đà tăng đang gia tốc",
+        "Giá nằm trên Middle Band (138.36) với percent_b = 58.93 — Xu hướng tăng được xác nhận, còn room tăng tiếp",
+        "MA5 (137.28) nằm dưới giá hiện tại (141.0) và cắt lên MA20 (138.36) — Cấu trúc moving average hỗ trợ tăng",
+        "Vùng hỗ trợ mạnh tại 122.8 cách giá 12.8% — An toàn để vào long với stop loss rõ ràng",
+        "ATR cao (7.59) cho phép lợi nhuận lớn — Biến động cao = cơ hội tăng giá mạnh trong giai đoạn momentum"
+      ],
+      "entry_suggestion": 138.5,
+      "tp_target": 153.5,
+      "main_risk": "RSI = 46.23 (trung lập) chưa vào vùng overbought — Nếu volume không đủ mạnh, đà tăng có thể bị hãm lại trước kháng cự 156.0; Risk: pullback về MA20 (138.36) nếu MACD đảo chiều"
+    },
+    "bear": {
+      "stance": "BEAR",
+      "score": 62,
+      "top_risks": [
+        "RSI ở mức 46.23 (NEUTRAL) - không có lực mua mạnh, khả năng pullback cao",
+        "MACD âm (-3.79) dù histogram dương - chỉ báo sức mua yếu, chưa có tín hiệu divergence bullish rõ ràng",
+        "Giá hiện tại (141.0) đã gần kháng cự 156.0 (+10.64%) - Upside bị hạn chế, rủi ro/thưởng không thuận lợi",
+        "ATR cực cao (7.59) - Volatility rất lớn tạo điều kiện cho breakout xuống hoặc pullback mạnh",
+        "Volume ratio 0.74 (BÌNH THƯỜNG) - Thiếu khối lượng giao dịch hỗ trợ, sắc bén tăng giá không đủ",
+        "MA5 (137.28) < MA20 (138.36) - Mặc dù trend TĂNG nhưng MA ngắn hạn yếu hơn, không có Golden Cross"
+      ],
+      "sl_suggestion": 148.5,
+      "downside_target": 130.2,
+      "main_bull_flaw": "MACD vẫn âm và histogram chỉ bắt đầu tăng tốc - sức mua vẫn chưa vượt lực bán. Kết hợp RSI neutral + volume bình thường + gần kháng cự mạnh (156.0) = khả năng phục hồi tăng tiếp rất hạn chế, nguy cơ consolidation hoặc pullback đáng kể xuống vùng 130-135 là cao"
+    },
+    "summary": {
+      "bull_score": 68,
+      "bear_score": 62,
+      "dominant_side": "BULL",
+      "key_agreement": "Cả hai bên công nhận ATR cao (7.59) tạo biến động lớn, RSI ở mức trung lập (46.23) chưa overbought, và volume ratio bình thường (0.74) không đủ mạnh để xác nhận xu hướng hoàn toàn.",
+      "key_disagreement": "Bull đánh giá MACD histogram dương (1.0578) là tín hiệu momentum phục hồi mạnh; Bear coi MACD vẫn âm (-3.79) là yếu tố tiêu cực chính, cho rằng sức mua chưa vượt lực bán. Bull thấy MA5 cắt lên MA20 là khả quan; Bear nhấn mạnh MA5 < MA20 và thiếu Golden Cross rõ ràng.",
+      "bull_strongest_point": "MACD histogram dương (1.0578) với giá trên Middle Band (percent_b = 58.93) + cấu trúc MA5 < giá < MA20 tạo khung tăng hợp lệ; vùng hỗ trợ tại 122.8 cách 12.8% cung cấp stop loss rõ ràng với RRR khả thi.",
+      "bear_strongest_point": "MACD vẫn âm (-3.79) dù histogram bắt đầu tăng tốc = sức mua chỉ mới khởi động yếu ớt; giá gần kháng cự 156.0 (+10.64%) trong khi volume ratio 0.74 bình thường = upside bị cắn cụt, rủi ro pullback xuống 130-135 cao hơn.",
+      "market_context": "VIC (141.0) ở giai đoạn phục hồi sơ khai với momentum MACD bắt đầu gia tốc nhưng chưa vượt qua tâm điểm (MACD vẫn âm). RSI trung lập + volume bình thường tạo ra một bức tranh 'có tăng nhưng chưa mạnh', với khả năng consolidation cao hơn breakout quyết định.",
+      "uncertainty_level": "TRUNG BÌNH"
+    }
+  },
+  "decision": {
+    "symbol": "VIC",
+    "action": "CHỜ",
+    "entry": 0.0,
+    "sl": 0.0,
+    "tp": 0.0,
+    "risk_reward": 0.0,
+    "nav_pct": 0,
+    "holding_period": "N/A",
+    "confidence": "THẤP",
+    "reason": "VIC đang ở giai đoạn phục hồi sơ khai với tín hiệu hỗn hợp: MACD histogram dương nhưng MACD tuyệt đối vẫn âm (-3.79) = sức mua chưa đủ mạnh để quyết định. RSI trung lập (46.23), volume bình thường, khả năng consolidation cao hơn breakout. Bull score 68 vs Bear 62 quá sát nhau (chênh lệch 6 điểm) không đủ độ tin cậy 70+ để vào lệnh.",
+    "invalidation": "Chờ 2-3 phiên để xác nhận: nếu MACD dương + giá vượt MA20 + volume tăng ≥30%, lúc đó mua tại 141-142 với SL 122.8 (R = 18.2, T = 156 → RR = 1:0.85, chưa đủ). Nếu giá xuống 130-135 + MACD cải thiện, điểm vào sẽ tốt hơn (R = 5-7, T = 156 → RR = 1:2.9+, hợp lệ)."
+  }
+}

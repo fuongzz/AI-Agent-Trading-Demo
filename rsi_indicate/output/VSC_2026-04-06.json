@@ -1,0 +1,58 @@
+{
+  "symbol": "VSC",
+  "date": "66",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 23.8,
+    "change": "-0.5",
+    "change_pct": "-2.06%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 37.7,
+      "signal": "NEUTRAL"
+    },
+    "ma": {
+      "ma5": 23.87,
+      "ma20": 24.09,
+      "trend": "GIẢM",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": -0.0057,
+      "signal": 0.1106,
+      "histogram": -0.1163,
+      "signal_text": "MACD âm nhưng đang phục hồi"
+    },
+    "bollinger": {
+      "upper": 26.07,
+      "middle": 24.09,
+      "lower": 22.1,
+      "percent_b": 42.82,
+      "signal_text": "Giá dưới middle band, xu hướng giảm"
+    },
+    "atr": {
+      "value": 0.92,
+      "volatility": "CAO"
+    },
+    "volume": {
+      "ratio": 0.72,
+      "signal": "BÌNH THƯỜNG"
+    },
+    "sr": {
+      "support": 22.85,
+      "resistance": 26.25,
+      "zone_signal": "Gần hỗ trợ, vùng an toàn xem xét mua"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 22.85,
+    "sl": 22.42,
+    "tp": 25.64,
+    "confidence": "TRUNG BÌNH",
+    "reason": "Giá gần vùng hỗ trợ với RSI trung tính. Chờ MACD phục hồi và xác nhận tín hiệu mua trước khi vào lệnh."
+  }
+}

@@ -1,0 +1,35 @@
+[
+  {
+    "date": "2026-04-06",
+    "price": {
+      "latest": 81.5,
+      "change": "-3.1",
+      "change_pct": "-3.66%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 61.46,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 85.48,
+        "ma20": 79.0,
+        "trend": "HỖNHỢP",
+        "cross": "NONE"
+      },
+      "macd": "MACD giảm tốc — Đà tăng đang yếu dần",
+      "volume": {
+        "ratio": 1.05,
+        "signal": "BÌNH THƯỜNG"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 81.5,
+      "sl": 74.64,
+      "tp": 90.64,
+      "confidence": "TRUNG BÌNH",
+      "reason": "Tín hiệu hỗn hợp: MA5 giảm nhưng MA20 tăng, MACD yếu dần, volatility rất cao. Cần chờ xác nhận trước khi vào lệnh."
+    }
+  }
+]

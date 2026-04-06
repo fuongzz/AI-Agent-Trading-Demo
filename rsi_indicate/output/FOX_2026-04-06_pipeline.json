@@ -1,0 +1,114 @@
+{
+  "symbol": "FOX",
+  "timestamp": "2026-04-06 07:28:44",
+  "elapsed_sec": 48.6,
+  "ptkt_report": {
+    "symbol": "FOX",
+    "date": "66",
+    "company": "N/A",
+    "exchange": "N/A",
+    "industry": "N/A",
+    "price": {
+      "latest": 81.5,
+      "change": "-3.1",
+      "change_pct": "-3.66%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 61.46,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 85.48,
+        "ma20": 79.0,
+        "trend": "HỖNHỢP",
+        "cross": "NONE"
+      },
+      "macd": {
+        "macd": 1.6486,
+        "signal": 0.8922,
+        "histogram": 0.7565,
+        "signal_text": "MACD giảm tốc — Đà tăng đang yếu dần"
+      },
+      "bollinger": {
+        "upper": 90.01,
+        "middle": 79.0,
+        "lower": 67.99,
+        "percent_b": 61.35,
+        "signal_text": "Giá trên middle band — Xu hướng tăng"
+      },
+      "atr": {
+        "value": 4.57,
+        "volatility": "RẤT CAO"
+      },
+      "volume": {
+        "ratio": 1.05,
+        "signal": "BÌNH THƯỜNG"
+      },
+      "sr": {
+        "support": 72.3,
+        "resistance": 85.0,
+        "zone_signal": "Gần kháng cự hơn — Upside hạn chế"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 81.5,
+      "sl": 74.64,
+      "tp": 90.64,
+      "confidence": "TRUNG BÌNH",
+      "reason": "Tín hiệu hỗn hợp: MA5 giảm nhưng MA20 tăng, MACD yếu dần, volatility rất cao. Cần chờ xác nhận trước khi vào lệnh."
+    }
+  },
+  "debate": {
+    "symbol": "FOX",
+    "bull": {
+      "stance": "BULL",
+      "score": 62,
+      "top_reasons": [
+        "Giá đang giao dịch trên đường MA20 (79.0) và trên middle band Bollinger (79.0) - xác nhận xu hướng tăng đang có sức mạnh",
+        "RSI ở mức 61.46 (NEUTRAL) - vẫn còn phòng tăng tiếp, chưa đạt vùng overbought (>70), cho phép upside tiếp tục",
+        "Histogram MACD dương (0.7565) và MACD > Signal line - mặc dù tốc độ giảm nhưng momentum tăng vẫn còn hoạt động, chưa có dấu hiệu đảo chiều",
+        "Percent B = 61.35% - giá ở giữa upper/middle band, không bị đẩy quá cao, giữ được độ an toàn",
+        "Vùng hỗ trợ vững chắc tại 72.3 (cách 9.2 điểm) - cung cấp điểm dừng lỗ an toàn với tỷ lệ R/R tốt",
+        "Volatility RẤT CAO (ATR = 4.57) - tạo cơ hội profit lớn nếu xu hướng tăng tiếp tục"
+      ],
+      "entry_suggestion": 80.5,
+      "tp_target": 88.5,
+      "main_risk": "MACD giảm tốc độ và khối lượng BÌNH THƯỜNG (ratio 1.05) - nếu không có xác nhận từ khối lượng tăng mạnh, đà tăng có thể bị hủy hoại. Cần chú ý breakout vượt kháng cự 85.0, nếu không xuyên sẽ quay về vùng tích lũy 79-81"
+    },
+    "bear": {
+      "stance": "BEAR",
+      "score": 62,
+      "top_risks": [
+        "MACD giảm tốc rõ rệt — Đà tăng đang mất động lực, khả năng đảo chiều tăng",
+        "Giá gần kháng cự 85.0 trong khi RSI 61.46 (NEUTRAL) — Thiếu sự xác nhận mạnh mẽ để vượt resistance",
+        "Volatility RẤT CAO (ATR 4.57) — Tăng rủi ro whipsaw, dễ bị shake-out tại vùng kháng cự",
+        "Xu hướng MA hỗn hợp (MA5 > MA20 nhưng không cross) — Thiếu sự xác nhận rõ ràng của uptrend",
+        "Volume BÌNH THƯỜNG (ratio 1.05) — Thiếu khí thế mua mạnh để phá vỡ kháng cự 85.0",
+        "Percent_B 61.35 — Giá gần upper band, nguy cơ pullback hoặc reversal từ vùng overbought",
+        "Khoảng cách hạn chế đến support — Chỉ cách 72.3 (9.2 điểm, ~11%), downside risk không nhỏ"
+      ],
+      "sl_suggestion": 85.5,
+      "downside_target": 72.3,
+      "main_bull_flaw": "Mặc dù giá trên middle band Bollinger nhưng MACD đang suy yếu, RSI không tăng cao, volume yếu, và lực đẩy tăng không đủ mạnh để vượt kháng cự 85.0 — Uptrend thiếu xác nhận và có dấu hiệu mệt mỏi"
+    },
+    "summary": {
+      "dominant_side": "NEUTRAL",
+      "raw": "```json\n{\n  \"bull_score\": 62,\n  \"bear_score\": 62,\n  \"dominant_side\": \"NEUTRAL\",\n  \"key_agreement\": \"Cả hai bên đều thừa nhận: (1) MACD đang giảm tốc độ - mất động lực, (2) Volume bình thường (ratio 1.05) - thiếu xác nhận mạnh, (3) RSI ở mức neutral 61.46 - chưa có tín hiệu cực đoan, (4) Volatility r"
+    }
+  },
+  "decision": {
+    "symbol": "FOX",
+    "action": "CHỜ",
+    "entry": null,
+    "sl": null,
+    "tp": null,
+    "risk_reward": null,
+    "nav_pct": 0,
+    "holding_period": null,
+    "confidence": "THẤP",
+    "reason": "Bull/Bear score cân bằng 62-62 (NEUTRAL) không cung cấp hướng rõ ràng. MACD yếu dần, RSI 61.46 (vùng quá nóng nhưng chưa cực đoan), ATR rất cao báo hiệu biến động lớn - rủi ro cao. Chờ tín hiệu xác nhận mạnh hơn.",
+    "invalidation": "Nếu giá đột phá kháng cự 85.0 với volume cao hoặc rơi dưới hỗ trợ 72.3 thì sẽ tái đánh giá."
+  }
+}

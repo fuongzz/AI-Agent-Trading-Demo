@@ -1,0 +1,35 @@
+[
+  {
+    "date": "2026-04-06",
+    "price": {
+      "latest": 119.2,
+      "change": "+1.3",
+      "change_pct": "+1.1%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 78.24,
+        "signal": "OVERBOUGHT"
+      },
+      "ma": {
+        "ma5": 110.66,
+        "ma20": 101.65,
+        "trend": "TĂNG",
+        "cross": "NONE"
+      },
+      "macd": "MACD tăng tốc → Đà tăng đang mạnh lên",
+      "volume": {
+        "ratio": 1.1,
+        "signal": "VOLUME BÌNH THƯỜNG"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 117.5,
+      "sl": 112.15,
+      "tp": 128.6,
+      "confidence": "TRUNG BÌNH",
+      "reason": "RSI quá mua (78.24) và giá vượt Bollinger Band trên, dù MACD mạnh nhưng cần chờ tín hiệu điều chỉnh. Có thể vào lại quanh MA5 hoặc support 93."
+    }
+  }
+]

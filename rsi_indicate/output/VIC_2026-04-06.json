@@ -1,0 +1,58 @@
+{
+  "symbol": "VIC",
+  "date": "66",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 141.0,
+    "change": "1.1",
+    "change_pct": "0.79%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 46.23,
+      "signal": "NEUTRAL"
+    },
+    "ma": {
+      "ma5": 137.28,
+      "ma20": 138.36,
+      "trend": "TĂNG",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": -3.79,
+      "signal": -4.8477,
+      "histogram": 1.0578,
+      "signal_text": "MACD tăng tốc → Đà tăng đang mạnh lên"
+    },
+    "bollinger": {
+      "upper": 153.14,
+      "middle": 138.36,
+      "lower": 123.58,
+      "percent_b": 58.93,
+      "signal_text": "GIÁ TRÊN MIDDLE BAND → Xu hướng tăng"
+    },
+    "atr": {
+      "value": 7.59,
+      "volatility": "RẤT CAO"
+    },
+    "volume": {
+      "ratio": 0.74,
+      "signal": "BÌNH THƯỜNG"
+    },
+    "sr": {
+      "support": 122.8,
+      "resistance": 156.0,
+      "zone_signal": "Gần kháng cự hơn (+10.64%) — Upside hạn chế"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 141.0,
+    "sl": 129.62,
+    "tp": 156.18,
+    "confidence": "TRUNG BÌNH",
+    "reason": "Xu hướng tăng nhưng volatility rất cao và gần kháng cự. RSI trung tính cần xác nhận thêm trước khi vào lệnh."
+  }
+}

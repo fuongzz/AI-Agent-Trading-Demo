@@ -1,0 +1,120 @@
+{
+  "symbol": "DGC",
+  "timestamp": "2026-04-06 07:42:17",
+  "elapsed_sec": 26.1,
+  "ptkt_report": {
+    "symbol": "DGC",
+    "date": "66",
+    "company": "N/A",
+    "exchange": "N/A",
+    "industry": "N/A",
+    "price": {
+      "latest": 56.5,
+      "change": "2.5",
+      "change_pct": "4.63%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 27.23,
+        "signal": "OVERSOLD"
+      },
+      "ma": {
+        "ma5": 52.06,
+        "ma20": 61.4,
+        "trend": "GIẢM",
+        "cross": "NONE"
+      },
+      "macd": {
+        "macd": -4.8886,
+        "signal": -4.449,
+        "histogram": -0.4397,
+        "signal_text": "MACD âm nhưng đang phục hồi"
+      },
+      "bollinger": {
+        "upper": 82.98,
+        "middle": 61.4,
+        "lower": 39.82,
+        "percent_b": 38.65,
+        "signal_text": "Giá dưới middle band, xu hướng giảm"
+      },
+      "atr": {
+        "value": 3.58,
+        "volatility": "RẤT CAO"
+      },
+      "volume": {
+        "ratio": 1.08,
+        "signal": "Volume bình thường, không có tín hiệu đặc biệt"
+      },
+      "sr": {
+        "support": 48.25,
+        "resistance": 76.9,
+        "zone_signal": "Gần hỗ trợ hơn, vùng an toàn xem xét mua"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 51.13,
+      "sl": 48.25,
+      "tp": 63.66,
+      "confidence": "THẤP",
+      "reason": "RSI quá bán có tín hiệu mua nhưng giá vẫn dưới MA20, volatility rất cao cần thận trọng. Chờ MACD phục hồi hoàn toàn trước khi vào vị thế."
+    }
+  },
+  "debate": {
+    "symbol": "DGC",
+    "bull": {
+      "stance": "BULL",
+      "score": 62,
+      "top_reasons": [
+        "RSI ở mức 27.23 (OVERSOLD) - Cổ phiếu bị bán quá mức, tín hiệu phục hồi mạnh sắp tới",
+        "MACD đang phục hồi từ đáy âm - Histogram âm nhưng có xu hướng hẹp lại, mômen tích cực bắt đầu hình thành",
+        "Giá gần vùng hỗ trợ 48.25 - Tạo vùng tích lũy an toàn với rủi ro giới hạn, reward/risk tốt",
+        "Volatility cao (ATR 3.58) - Cơ hội phục hồi mạnh khi momentum thay đổi, mục tiêu lợi nhuận lớn",
+        "Giá trên middle band Bollinger (56.5 > 39.82) - Chưa chạm đáy kênh, còn dư địa tăng 36% đến kháng cự 76.9",
+        "Khoảng cách từ giá hiện tại đến hỗ trợ nhỏ (8.25 đồng) - Stop loss chặn có kích thước tốt"
+      ],
+      "entry_suggestion": 54.5,
+      "tp_target": 73.2,
+      "main_risk": "Nếu cổ phiếu phá vỡ hỗ trợ 48.25, xu hướng giảm có thể tiếp tục sâu hơn đến 39.82 (lower band), mất 30% giá trị. RSI oversold không đảm bảo phục hồi ngay, cần xác nhận bằng volume tăng và MACD cắt trên signal line"
+    },
+    "bear": {
+      "stance": "BEAR",
+      "score": 72,
+      "top_risks": [
+        "RSI ở mức 27.23 (oversold) có nguy cơ bounce mạnh hoặc rebound kỹ thuật, tuy nhiên điều này cũng cho thấy áp lực bán quá mạnh",
+        "Volatility RẤT CAO (ATR 3.58) - biến động cực lớn tạo rủi ro lỗ stop-loss bất ngờ, thể hiện thị trường mất ổn định",
+        "Xu hướng giảm rõ rệt: MA5 (52.06) dưới MA20 (61.4), giá nằm dưới middle Bollinger band, MACD vẫn âm mặc dù phục hồi từng chút",
+        "Khoảng cách từ giá hiện tại (56.5) đến support (48.25) chỉ 8.25 điểm - nguy cơ break support cao nếu bán áp lực tiếp tục",
+        "Histogram MACD âm (-0.4397) và tuy đang phục hồi nhưng vẫn chưa vượt signal line, chưa có tín hiệu đảo chiều mạnh",
+        "Volume ratio chỉ 1.08 - không có khối lượng đủ mạnh để xác nhận bounce, dễ bị suy yếu"
+      ],
+      "sl_suggestion": 62.8,
+      "downside_target": 44.5,
+      "main_bull_flaw": "Lập luận 'gần vùng support là vùng mua an toàn' bỏ qua thực tế là RSI oversold không tự động đảo chiều - cần khối lượng và MACD xác nhận, cả hai đều yếu. Ngoài ra, xu hướng giảm mạnh (MA5<MA20, giá<Bollinger middle) có thể kéo dài xuống support thấp hơn 48.25 nếu không có catalyst tích cực"
+    },
+    "summary": {
+      "bull_score": 62,
+      "bear_score": 72,
+      "dominant_side": "BEAR",
+      "key_agreement": "Cả hai bên đồng ý RSI ở mức 27.23 (oversold), volatility cao (ATR 3.58), và khoảng cách từ giá hiện tại đến support 48.25 chỉ 8.25 điểm tạo rủi ro phá vỡ support",
+      "key_disagreement": "Bull coi RSI oversold là tín hiệu phục hồi sắp tới với reward/risk tốt; Bear nhấn mạnh oversold không đảm bảo bounce ngay, cần xác nhận volume và MACD mạnh, cả hai đều yếu hiện tại. Bull tin vào dư địa tăng 36% đến 76.9; Bear dự báo downside xuống 44.5 nếu support bị phá vỡ",
+      "bull_strongest_point": "RSI ở mức 27.23 là oversold cực độ với khoảng cách đến support chỉ 8.25 điểm, tạo ratio reward/risk hấp dẫn (stop loss chặn tốt) và dư địa tăng về 76.9 là 36%",
+      "bear_strongest_point": "Xu hướng giảm được xác nhận rõ rệt (MA5 52.06 < MA20 61.4, giá dưới middle Bollinger), MACD vẫn âm và chưa vượt signal line, volume ratio yếu (1.08) không đủ để xác nhận bounce, nguy cơ support 48.25 bị phá vỡ cao",
+      "market_context": "DGC đang trong tình trạng oversold cực độ nhưng trong xu hướng giảm mạnh với xác nhận kỹ thuật yếu (moving average, MACD, volume). Tình huống này tạo ra cuộc tranh chấp giữa \"giá bị quá bán = cơ hội mua\" (Bull) và \"xu hướng giảm vẫn kiểm soát = rủi ro tiếp tục\" (Bear)",
+      "uncertainty_level": "CAO"
+    }
+  },
+  "decision": {
+    "symbol": "DGC",
+    "action": "CHỜ",
+    "entry": null,
+    "sl": null,
+    "tp": null,
+    "risk_reward": null,
+    "nav_pct": 0,
+    "holding_period": null,
+    "confidence": "THẤP",
+    "reason": "RSI oversold 27.23 tạo cơ hội mua lý thuyết, nhưng Bear score cao hơn (72 vs 62) với xác nhận kỹ thuật yếu: MA5 < MA20, MACD âm, volume yếu (ratio 1.08), giá dưới middle Bollinger. Không đủ điều kiện để vào lệnh MUA vì rủi ro phá support 48.25 cao. Nên chờ MACD vượt signal line + volume tăng hoặc xác nhận bounce ở support trước khi quyết định.",
+    "invalidation": "Nếu giá phá support 48.25 hoặc MACD tiếp tục suy yếu, rủi ro chuyển mô hình càng tăng. Chỉ xem xét MUA nếu: (1) MACD vượt signal line, (2) RSI tăng trên 35, (3) Volume tăng trên 1.5 lần, (4) Giá test và rebound từ support 48.25."
+  }
+}

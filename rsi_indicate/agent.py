@@ -201,6 +201,7 @@ Hãy trả về JSON hợp lệ (KHÔNG có markdown, KHÔNG có text ngoài JSO
     response = client.messages.create(
         model="claude-haiku-4-5-20251001",
         max_tokens=800,
+        temperature=0,
         messages=[{"role": "user", "content": prompt}]
     )
 

@@ -86,7 +86,63 @@ def run_pipeline(symbol: str, force: bool = False) -> dict:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
     print(f"\n[Pipeline hoàn thành] {elapsed}s | Lưu → {out_path}")
+    _print_full_result(result)
     return result
+
+
+def _print_full_result(result: dict):
+    """In đầy đủ: giá, PTKT, debate, quyết định cuối."""
+    ptkt = result.get("ptkt_report", {})
+    p    = ptkt.get("price", {})
+    s    = ptkt.get("signals", {})
+    sr   = s.get("sr", {})
+    dbt  = result.get("debate", {})
+    bull = dbt.get("bull", {})
+    bear = dbt.get("bear", {})
+    syn  = dbt.get("summary", {})
+    d    = result.get("decision", {})
+    action = d.get("action", "?")
+    icon   = {"MUA": "🟢", "BÁN": "🔴", "CHỜ": "🟡"}.get(action, "")
+
+    print(f"\n{'█'*60}")
+    print(f"  KẾT QUẢ PHÂN TÍCH — {result.get('symbol')}  ({result.get('timestamp')})")
+    print(f"{'█'*60}")
+
+    # ── Giá ──────────────────────────────────────────────────────
+    print(f"\n  [ GIÁ ]")
+    print(f"  Công ty  : {ptkt.get('company')} ({ptkt.get('exchange')}, {ptkt.get('industry')})")
+    print(f"  Giá đóng : {p.get('latest')}  ({p.get('change_pct')}  |  {p.get('change')})")
+
+    # ── Phân tích kỹ thuật ────────────────────────────────────────
+    ma  = s.get("ma", {})
+    rsi = s.get("rsi", {})
+    mac = s.get("macd", {})
+    bol = s.get("bollinger", {})
+    vol = s.get("volume", {})
+    atr = s.get("atr", {})
+
+    print(f"\n  [ PHÂN TÍCH KỸ THUẬT ]")
+    print(f"  RSI      : {rsi.get('value')}  → {rsi.get('signal')}")
+    print(f"  MA5/MA20 : {ma.get('ma5')} / {ma.get('ma20')}  → {ma.get('trend')}  ({ma.get('cross')})")
+    print(f"  MACD     : {mac.get('signal_text')}")
+    print(f"  Bollinger: {bol.get('signal_text')}")
+    print(f"  Volume   : {vol.get('ratio')}x TB20  → {vol.get('signal')}")
+    print(f"  ATR      : {atr.get('volatility')}")
+    print(f"  Hỗ trợ  : {sr.get('support')}  |  Kháng cự: {sr.get('resistance')}")
+    print(f"  Vùng S/R : {sr.get('zone_signal')}")
+
+    # ── Debate ────────────────────────────────────────────────────
+    print(f"\n  [ DEBATE BULL vs BEAR ]")
+    print(f"  Bull (điểm {bull.get('score', '?')}) : {bull.get('thesis', bull.get('summary', ''))}")
+    print(f"  Bear (điểm {bear.get('score', '?')}) : {bear.get('thesis', bear.get('summary', ''))}")
+    print(f"  Dominant : {syn.get('dominant_side', '?')}  — {syn.get('consensus', '')}")
+
+    # ── Quyết định ────────────────────────────────────────────────
+    print(f"\n  [ QUYẾT ĐỊNH TRADER ]")
+    print(f"  {icon}  {action}  (Tin cậy: {d.get('confidence')})")
+    print(f"  Entry : {d.get('entry')}  |  SL: {d.get('sl')}  |  TP: {d.get('tp')}  |  NAV: {d.get('nav_pct')}%")
+    print(f"  Lý do : {d.get('reason')}")
+    print(f"{'█'*60}\n")
 
 
 def _realtime_check(symbol: str, result: dict):
