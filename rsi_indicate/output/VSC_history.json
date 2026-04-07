@@ -31,5 +31,38 @@
       "confidence": "TRUNG BÌNH",
       "reason": "Giá gần vùng hỗ trợ với RSI trung tính. Chờ MACD phục hồi và xác nhận tín hiệu mua trước khi vào lệnh."
     }
+  },
+  {
+    "date": "2026-04-07",
+    "price": {
+      "latest": 24.1,
+      "change": "+0.55",
+      "change_pct": "+2.34%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 50.32,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 24.0,
+        "ma20": 24.24,
+        "trend": "GIẢM",
+        "cross": "NONE"
+      },
+      "macd": "MACD âm nhưng đang phục hồi",
+      "volume": {
+        "ratio": 1.43,
+        "signal": "BÌNH THƯỜNG"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 24.1,
+      "sl": 22.52,
+      "tp": 26.2,
+      "confidence": "THẤP",
+      "reason": "RSI trung tính, MACD âm, giá dưới MA20 với biến động cao. Cần chờ tín hiệu xác nhận trước khi vào lệnh."
+    }
   }
 ]

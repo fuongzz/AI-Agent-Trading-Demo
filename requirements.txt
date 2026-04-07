@@ -4,6 +4,7 @@ anthropic==0.84.0
 # Stock data
 vnstock==3.4.2
 requests==2.32.5
+beautifulsoup4
 
 # Data processing
 pandas==3.0.1
@@ -21,3 +22,20 @@ apscheduler
 
 # Indicators (Thế vnstock_ta)
 pandas-ta-openbb
+
+# Discord Bot (thay Telegram)
+discord.py
+
+# Memory (optional — cài nếu muốn dùng mid-term memory)
+# chromadb
+
+# Dashboard
+streamlit
+plotly
+
+# Backtesting metrics
+quantstats
+
+# Weekly Report
+jinja2
+weasyprint

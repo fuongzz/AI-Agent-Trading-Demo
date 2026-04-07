@@ -12,7 +12,8 @@ from datetime import datetime
 from fetcher import fetch_ohlcv, fetch_realtime, fetch_company_info
 from indicators import (
     calculate_rsi, calculate_moving_average, calculate_macd,
-    calculate_bollinger, calculate_atr, analyze_volume, find_support_resistance
+    calculate_bollinger, calculate_atr, analyze_volume, find_support_resistance,
+    detect_market_regime, calculate_confluence
 )
 from tools import TOOLS, execute_tool
 
@@ -133,6 +134,12 @@ def run_agent_lite(symbol: str) -> dict:
         lows    = ohlcv["lows"]
         volumes = ohlcv["volumes"]
 
+        # Tính trước để tái dùng trong confluence (tránh gọi lại 4 lần)
+        rsi_data  = calculate_rsi(closes)
+        ma20_data = calculate_moving_average(closes, 20)
+        macd_data = calculate_macd(closes)
+        bb_data   = calculate_bollinger(closes)
+
         indicators = {
             "company":  company,
             "price_info": {
@@ -147,14 +154,17 @@ def run_agent_lite(symbol: str) -> dict:
                 "change_pct": ohlcv["change_pct"],
             },
             "realtime":  rt,
-            "rsi":       calculate_rsi(closes),
+            "rsi":       rsi_data,
             "ma5":       calculate_moving_average(closes, 5),
-            "ma20":      calculate_moving_average(closes, 20),
-            "macd":      calculate_macd(closes),
-            "bollinger": calculate_bollinger(closes),
+            "ma20":      ma20_data,
+            "macd":      macd_data,
+            "bollinger": bb_data,
             "atr":       calculate_atr(highs, lows, closes),
             "volume":    analyze_volume(closes, volumes),
             "support_resistance": find_support_resistance(closes, highs, lows),
+            # Phân tích tổng hợp (Phần 2 — Signal Interpretation Engine)
+            "market_regime": detect_market_regime(closes),
+            "confluence":    calculate_confluence(rsi_data, ma20_data, macd_data, bb_data),
         }
 
         with open(cache_path, "w", encoding="utf-8") as f:
@@ -178,6 +188,8 @@ Hãy trả về JSON hợp lệ (KHÔNG có markdown, KHÔNG có text ngoài JSO
     "change": "...",
     "change_pct": "..."
   }},
+  "market_regime": "UPTREND MẠNH/DOWNTREND/RANGING",
+  "confluence": {{"score": 0, "confluence_status": "HIGH CONVICTION MUA/HIGH CONVICTION BÁN/MIXED", "buy_signals_detected": []}},
   "signals": {{
     "rsi":       {{"value": 0.0, "signal": "OVERSOLD/NEUTRAL/OVERBOUGHT"}},
     "ma":        {{"ma5": 0.0, "ma20": 0.0, "trend": "TĂNG/GIẢM", "cross": "GOLDEN/DEATH/NONE"}},
@@ -281,9 +293,13 @@ def _print_analysis(a: dict):
     r  = a.get("recommendation", {})
     sr = s.get("sr", {})
 
+    conf = a.get("confluence", {})
     print(f"\n{'='*60}")
     print(f"  {a.get('symbol')} — {a.get('company')} ({a.get('exchange')}, {a.get('industry')})")
     print(f"  Ngày: {a.get('date')}")
+    print(f"{'─'*60}")
+    print(f"  Regime:    {a.get('market_regime', 'N/A')}")
+    print(f"  Confluence: {conf.get('confluence_status', 'N/A')}  (score: {conf.get('score', '?')})")
     print(f"{'─'*60}")
     print(f"  Giá:       {p.get('latest')}  ({p.get('change_pct')})")
     print(f"  RSI:       {s.get('rsi', {}).get('value')}  → {s.get('rsi', {}).get('signal')}")

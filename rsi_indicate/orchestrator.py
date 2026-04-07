@@ -28,14 +28,17 @@ sys.path.insert(0, os.path.dirname(__file__))
 from langgraph.graph import StateGraph, START, END
 
 # Import các components cũ
-from analysts.ptkt_agent      import run as run_ptkt
-from research.debate_agent    import run as run_debate
-from research.sentiment_agent import run as run_sentiment
-from trader.trader_agent      import run as run_trader
-from fetcher                  import fetch_realtime, fetch_macro, fetch_foreign_flow
+from analysts.ptkt_agent          import run as run_ptkt
+from analysts.fa_agent            import run as run_fa
+from analysts.foreign_flow_agent  import run as run_foreign_flow
+from research.debate_agent        import run as run_debate
+from research.sentiment_agent     import run as run_sentiment
+from trader.trader_agent          import run as run_trader
+from fetcher                      import fetch_realtime, fetch_macro, fetch_foreign_flow
 from indicators               import get_session_progress
 from database                 import save_agent_decision
 from risk_manager             import evaluate_risk
+from screener                 import quick_pass_single
 
 load_dotenv()
 
@@ -44,72 +47,105 @@ load_dotenv()
 # =====================================================================
 class PipelineState(TypedDict):
     symbol: str
-    ptkt_report: dict
-    sentiment: dict
-    macro: dict
-    foreign: dict
-    debate: dict
-    decision: dict
+    screen_result: dict        # Kết quả từ screener
+    ptkt_report: dict          # TA Agent output
+    fa_report: dict            # FA Agent output
+    sentiment: dict            # Sentiment Agent output
+    foreign_flow_report: dict  # Foreign Flow Agent output (LLM-based)
+    macro: dict                # Macro data (VN-Index, circuit breaker)
+    debate: dict               # Bull/Bear Debate output
+    decision: dict             # Trader + Risk Manager output
 
 # =====================================================================
 # 2. ĐỊNH NGHĨA CÁC NODE (AGENTS & MANAGERS)
 # =====================================================================
+
+def _run_screener(symbol: str) -> dict:
+    """Helper: chạy screener cho 1 mã, trả về screen_result dict."""
+    result = quick_pass_single(symbol)
+    icon = "✅" if result["pass"] else "❌"
+    print(f"    {icon} score={result['score']} | {result['reason']}")
+    return result
+
 
 def ta_agent_node(state: PipelineState) -> dict:
     print(">>> 🧠 [TA Agent] Phân tích Kỹ thuật...")
     report = run_ptkt(state["symbol"])
     return {"ptkt_report": report or {}}
 
+def fa_agent_node(state: PipelineState) -> dict:
+    print(">>> 📊 [FA Agent] Phân tích Cơ bản (BCTC)...")
+    report = run_fa(state["symbol"])
+    return {"fa_report": report or {}}
+
 def sentiment_agent_node(state: PipelineState) -> dict:
     print(">>> 📰 [Sentiment Agent] Phân tích Tin tức (CafeF/VnExpress)...")
     sent = run_sentiment(state["symbol"])
     return {"sentiment": sent or {}}
 
-def market_agent_node(state: PipelineState) -> dict:
-    print(">>> 🌐 [Market Agent] Đo lường Vĩ mô và khối Ngoại...")
+def macro_agent_node(state: PipelineState) -> dict:
+    print(">>> 🌐 [Macro Agent] Đo lường Vĩ mô (VN-Index, circuit breaker)...")
     macro = fetch_macro()
-    foreign = fetch_foreign_flow(state["symbol"])
-    return {"macro": macro, "foreign": foreign}
+    return {"macro": macro}
+
+def foreign_flow_agent_node(state: PipelineState) -> dict:
+    print(">>> 🏦 [Foreign Flow Agent] Phân tích hành vi khối ngoại...")
+    report = run_foreign_flow(state["symbol"])
+    return {"foreign_flow_report": report or {}}
 
 def debate_agent_node(state: PipelineState) -> dict:
     print(">>> ⚔️ [Debate Agent] Tổ chức tranh luận Bull vs Bear...")
-    debate_res = run_debate(state["ptkt_report"])
+    debate_res = run_debate(state["ptkt_report"], state.get("fa_report", {}),
+                            state.get("foreign_flow_report", {}))
     return {"debate": debate_res or {}}
 
 def trader_agent_node(state: PipelineState) -> dict:
     print(">>> 🧑‍💼 [Trader Agent] Xem xét chiến lược và ra quyết định...")
-    dec = run_trader(state["ptkt_report"], state["debate"], state["sentiment"])
+    dec = run_trader(state["ptkt_report"], state["debate"], state["sentiment"],
+                     state.get("fa_report", {}), state.get("foreign_flow_report", {}))
     return {"decision": dec or {}}
 
 def risk_manager_node(state: PipelineState) -> dict:
     print(">>> 🛡️ [Risk Manager] Rà soát quy tắc an toàn cuối cùng...")
     decision = state.get("decision", {})
-    action = decision.get("action", "CHỜ")
-    
+    action   = decision.get("action", "CHỜ")
+
     # Lấy thông số môi trường
-    macro = state.get("macro", {})
-    foreign = state.get("foreign", {})
+    macro      = state.get("macro", {})
+    ff_report  = state.get("foreign_flow_report", {})
     vnindex_change = macro.get("vnindex", {}).get("change_1d", 0)
-    foreign_room = foreign.get("room_usage_pct", 0)
-    
-    # Evaluate Risk
+
+    # Ưu tiên lấy room_usage từ foreign_flow_report (LLM agent), fallback về raw
+    foreign_room = (ff_report.get("room_usage_pct")
+                    or ff_report.get("raw_ff", {}).get("room_usage_pct")
+                    or 0)
+
+    # Evaluate Risk với đầy đủ rules
     risk_assessment = evaluate_risk(
-        state["symbol"], 
-        action, 
-        vnindex_change, 
-        foreign_room, 
-        intraday_amplitude_pct=0 # Giả định demo
+        symbol=state["symbol"],
+        ai_decision=action,
+        vnindex_change_pct=vnindex_change,
+        foreign_room_pct=foreign_room,
+        intraday_amplitude_pct=0,  # TODO: lấy từ intraday data khi có
+        recent_buys=[],            # TODO: lấy từ database khi có portfolio tracking
+        check_trading_window=True,
     )
-    
+
     # Đè quyết định nếu rủi ro vi phạm
-    decision["action"] = risk_assessment["final_action"]
-    decision["risk_override"] = risk_assessment["override_reason"]
-    
+    decision["action"]          = risk_assessment["final_action"]
+    decision["risk_override"]   = risk_assessment["override_reason"]
+    decision["risk_warnings"]   = risk_assessment.get("warnings", [])
+    decision["sizing_modifier"] = risk_assessment.get("sizing_modifier", 1.0)
+
+    # In warnings nếu có
+    for w in risk_assessment.get("warnings", []):
+        print(f"    ⚠️  {w}")
+
     # Ghi nhận vào SQLite DB
     today = datetime.now().strftime("%Y-%m-%d")
     score = state.get("ptkt_report", {}).get("signals", {}).get("confluence", {}).get("score", 0)
     save_agent_decision(state["symbol"], today, decision["action"], float(score), decision)
-    
+
     return {"decision": decision}
 
 # =====================================================================
@@ -119,24 +155,28 @@ def risk_manager_node(state: PipelineState) -> dict:
 workflow = StateGraph(PipelineState)
 
 # Add Nodes
-workflow.add_node("TA", ta_agent_node)
-workflow.add_node("Sentiment", sentiment_agent_node)
-workflow.add_node("Market", market_agent_node)
-workflow.add_node("Debate", debate_agent_node)
-workflow.add_node("Trader", trader_agent_node)
-workflow.add_node("Risk", risk_manager_node)
+workflow.add_node("TA",          ta_agent_node)
+workflow.add_node("FA",          fa_agent_node)
+workflow.add_node("Sentiment",   sentiment_agent_node)
+workflow.add_node("Macro",       macro_agent_node)
+workflow.add_node("ForeignFlow", foreign_flow_agent_node)
+workflow.add_node("Debate",      debate_agent_node)
+workflow.add_node("Trader",      trader_agent_node)
+workflow.add_node("Risk",        risk_manager_node)
 
-# Flow Song Song: TA, Sentiment, Market chạy cùng lúc.
+# Flow Song Song: 5 agents chạy cùng lúc (Tầng I theo system design).
 workflow.add_edge(START, "TA")
+workflow.add_edge(START, "FA")
 workflow.add_edge(START, "Sentiment")
-workflow.add_edge(START, "Market")
+workflow.add_edge(START, "Macro")
+workflow.add_edge(START, "ForeignFlow")
 
-# Sau khi cả 3 chạy xong sẽ cùng đổ vào Debate
-workflow.add_edge(["TA", "Sentiment", "Market"], "Debate")
+# Sau khi cả 5 chạy xong → Debate
+workflow.add_edge(["TA", "FA", "Sentiment", "Macro", "ForeignFlow"], "Debate")
 
 workflow.add_edge("Debate", "Trader")
 workflow.add_edge("Trader", "Risk")
-workflow.add_edge("Risk", END)
+workflow.add_edge("Risk",   END)
 
 app = workflow.compile()
 
@@ -145,30 +185,63 @@ app = workflow.compile()
 # 4. CHẠY THỰC TẾ & HIỂN THỊ
 # =====================================================================
 
-def run_pipeline(symbol: str, force: bool = False) -> dict:
+def run_pipeline(symbol: str, force: bool = False, skip_screener: bool = False) -> dict:
     symbol = symbol.upper()
     start = datetime.now()
-    
+
     print("\n" + "█"*60)
     print(f"  LANGGRAPH MULTI-AGENT PIPELINE — {symbol}")
     print(f"  {start.strftime('%Y-%m-%d %H:%M:%S')}")
     print("█"*60)
-    
-    # Chạy LangGraph
-    initial_state = {"symbol": symbol}
+
+    # ── Domain Knowledge Screener (chạy TRƯỚC LangGraph để tiết kiệm API cost) ──
+    screen_result = {"pass": True, "reason": "Screener bị bỏ qua (skip_screener=True)", "score": 0}
+    if not skip_screener:
+        print("\n>>> 🔍 [Screener] Kiểm tra sơ loại Domain Knowledge...")
+        screen_result = _run_screener(symbol)
+        icon = "✅" if screen_result["pass"] else "❌"
+        print(f"    {icon} score={screen_result['score']} | {screen_result['reason']}")
+
+        if not screen_result["pass"]:
+            print(f"\n[Screener] {symbol} KHÔNG qua vòng sơ loại → Skip toàn bộ agent pipeline.")
+            decision = {
+                "action":        "CHỜ",
+                "reason":        f"[Screener] {screen_result['reason']}",
+                "confidence":    "CAO",
+                "entry": None, "sl": None, "tp": None,
+                "risk_override": None,
+                "skipped_by_screener": True,
+            }
+            today = datetime.now().strftime("%Y-%m-%d")
+            save_agent_decision(symbol, today, "CHỜ", 0.0, decision)
+            elapsed = round((datetime.now() - start).total_seconds(), 1)
+            return {
+                "symbol": symbol,
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "elapsed_sec": elapsed,
+                "screen_result": screen_result,
+                "ptkt_report": {}, "sentiment": {}, "debate": {},
+                "decision": decision,
+            }
+
+    # ── Chạy LangGraph (chỉ khi pass screener) ──
+    initial_state = {"symbol": symbol, "screen_result": screen_result}
     final_state = app.invoke(initial_state)
     
     elapsed = round((datetime.now() - start).total_seconds(), 1)
     
     # Gộp thành Result dict tương thích hàm hiển thị
     result = {
-        "symbol": symbol,
-        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "elapsed_sec": elapsed,
-        "ptkt_report": final_state.get("ptkt_report", {}),
-        "sentiment": final_state.get("sentiment", {}),
-        "debate": final_state.get("debate", {}),
-        "decision": final_state.get("decision", {})
+        "symbol":              symbol,
+        "timestamp":           datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "elapsed_sec":         elapsed,
+        "screen_result":       screen_result,
+        "ptkt_report":         final_state.get("ptkt_report", {}),
+        "fa_report":           final_state.get("fa_report", {}),
+        "foreign_flow_report": final_state.get("foreign_flow_report", {}),
+        "sentiment":           final_state.get("sentiment", {}),
+        "debate":              final_state.get("debate", {}),
+        "decision":            final_state.get("decision", {})
     }
     
     print(f"\n[Pipeline hoàn thành] {elapsed}s")
@@ -186,6 +259,7 @@ def _print_full_result(result: dict):
     rsi    = s.get("rsi", {})
     mac    = s.get("macd", {})
     vol    = s.get("volume", {})
+    fa     = result.get("fa_report", {})
     dbt    = result.get("debate", {})
     bull   = dbt.get("bull", {})
     bear   = dbt.get("bear", {})
@@ -206,6 +280,18 @@ def _print_full_result(result: dict):
     print(f"  RSI: {rsi.get('signal')}")
     print(f"  MA:  {ma.get('trend')} | MACD: {mac.get('signal_text')}")
     print(f"  Vol: {vol.get('ratio')}x TB20 → {vol.get('signal')}")
+
+    print(f"\n  ▌ PHÂN TÍCH CƠ BẢN (FA)")
+    print(f"  {'─'*58}")
+    if fa and not fa.get("skipped"):
+        fa_icon = {"UNDERVALUED": "🟢", "OVERVALUED": "🔴", "FAIR_VALUE": "🟡"}.get(fa.get("valuation_verdict"), "⚪")
+        print(f"  {fa_icon} Định giá: {fa.get('valuation_verdict')}  |  Chất lượng: {fa.get('quality_score', '?')}/100")
+        print(f"  Triển vọng: {fa.get('growth_outlook', '?')}")
+        for flag in fa.get("anomaly_flags", [])[:2]:
+            print(f"  ⚠️  {flag}")
+        print(f"  Tóm tắt: {str(fa.get('fa_summary', ''))[:100]}...")
+    else:
+        print("  Không khả dụng.")
 
     print(f"\n  ▌ TÔNG TIN TỨC (SENTIMENT)")
     print(f"  {'─'*58}")
@@ -228,10 +314,14 @@ def _print_full_result(result: dict):
     print(f"  {'─'*58}")
     print(f"  {icon} Hành động : {action}")
     if d.get("risk_override"):
-         print(f"  🛡️ CHẶN RỦI RO: {d.get('risk_override')}")
+        print(f"  🛡️ CHẶN RỦI RO: {d.get('risk_override')}")
     else:
-         print(f"  Vào lệnh: {d.get('entry')} | SL: {d.get('sl')} | TP: {d.get('tp')}")
-         print(f"  Lý do: {d.get('reason')}")
+        print(f"  Vào lệnh: {d.get('entry')} | SL: {d.get('sl')} | TP: {d.get('tp')}")
+        if d.get("sizing_modifier") and d["sizing_modifier"] < 1.0:
+            print(f"  ⚠️  Sizing giảm còn {d['sizing_modifier']*100:.0f}% do risk warnings")
+        print(f"  Lý do: {d.get('reason')}")
+    for w in d.get("risk_warnings", []):
+        print(f"  ⚠️  {w}")
 
     print(f"{'█'*W}\n")
 

@@ -1,0 +1,58 @@
+{
+  "symbol": "SSI",
+  "date": "2026-04-07",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 26.9,
+    "change": "-0.05",
+    "change_pct": "-0.19%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 41.29,
+      "signal": "NEUTRAL"
+    },
+    "ma": {
+      "ma5": 27.26,
+      "ma20": 27.41,
+      "trend": "GIẢM",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": -0.8731,
+      "signal": -1.0064,
+      "histogram": 0.1333,
+      "signal_text": "MACD tăng tốc → Đà tăng đang mạnh lên"
+    },
+    "bollinger": {
+      "upper": 29.65,
+      "middle": 27.41,
+      "lower": 25.17,
+      "percent_b": 38.66,
+      "signal_text": "Giá dưới middle band → Xu hướng giảm"
+    },
+    "atr": {
+      "value": 1.01,
+      "volatility": "CAO"
+    },
+    "volume": {
+      "ratio": 0.32,
+      "signal": "Volume yếu + giá giảm → Giảm kiệt lực"
+    },
+    "sr": {
+      "support": 25.2,
+      "resistance": 35.0,
+      "zone_signal": "Giá gần support, cần theo dõi phản ứng"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 26.9,
+    "sl": 25.38,
+    "tp": 28.92,
+    "confidence": "THẤP",
+    "reason": "Xu hướng giảm với volume yếu, RSI trung tính. MACD có tín hiệu tích cực nhưng cần xác nhận thêm trước khi vào lệnh."
+  }
+}

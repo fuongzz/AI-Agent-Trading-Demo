@@ -31,5 +31,38 @@
       "confidence": "THẤP",
       "reason": "Xu hướng giảm trên MA5/MA20 nhưng MACD bắt đầu tăng tốc. Cần chờ tín hiệu xác nhận trước khi vào vị thế do volatility cao và giá sát kháng cự."
     }
+  },
+  {
+    "date": "2026-04-07",
+    "price": {
+      "latest": 26.9,
+      "change": "-0.05",
+      "change_pct": "-0.19%"
+    },
+    "signals": {
+      "rsi": {
+        "value": 41.29,
+        "signal": "NEUTRAL"
+      },
+      "ma": {
+        "ma5": 27.26,
+        "ma20": 27.41,
+        "trend": "GIẢM",
+        "cross": "NONE"
+      },
+      "macd": "MACD tăng tốc → Đà tăng đang mạnh lên",
+      "volume": {
+        "ratio": 0.32,
+        "signal": "Volume yếu + giá giảm → Giảm kiệt lực"
+      }
+    },
+    "recommendation": {
+      "action": "CHỜ",
+      "entry": 26.9,
+      "sl": 25.38,
+      "tp": 28.92,
+      "confidence": "THẤP",
+      "reason": "Xu hướng giảm với volume yếu, RSI trung tính. MACD có tín hiệu tích cực nhưng cần xác nhận thêm trước khi vào lệnh."
+    }
   }
 ]

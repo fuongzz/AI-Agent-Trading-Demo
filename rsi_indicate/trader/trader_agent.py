@@ -8,12 +8,18 @@ Output: TraderDecision — MUA/BÁN/CHỜ với entry, SL, TP, % NAV, lý do đ�
 """
 
 import json
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
 import anthropic
+from memory.memory_system import get_full_context, format_context_for_prompt
 
-MODEL = "claude-haiku-4-5-20251001"
+# System design: final decision → Sonnet (cần reasoning đầy đủ TA + FA + Sentiment + Debate)
+MODEL = "claude-sonnet-4-6"
 
 
-def run(ptkt_report: dict, debate: dict, sentiment: dict = None) -> dict:
+def run(ptkt_report: dict, debate: dict, sentiment: dict = None,
+        fa_report: dict = None, ff_report: dict = None) -> dict:
     """
     Chạy Trader Agent.
     Trả về TraderDecision — quyết định giao dịch cuối cùng.
@@ -43,6 +49,35 @@ NGUYÊN TẮC ĐẶT GIÁ:
 - CHỜ → nêu điều kiện cụ thể để MUA hoặc để BÁN (nếu đang nắm giữ)
 - % NAV: tối đa 20% cho 1 lệnh, phụ thuộc độ tin cậy
 - Trả về JSON hợp lệ, KHÔNG có markdown"""
+
+    # ── Lấy Memory Context ────────────────────────────────────────────────────
+    memory_ctx    = get_full_context(symbol, query=symbol)
+    memory_prompt = format_context_for_prompt(memory_ctx)
+    memory_block  = f"\n=== BỐI CẢNH LỊCH SỬ (Memory System) ===\n{memory_prompt}\n" if memory_prompt else ""
+
+    # Phần Foreign Flow — chỉ thêm nếu có dữ liệu
+    ff_block = ""
+    if ff_report and not ff_report.get("skipped") and not ff_report.get("error"):
+        ff_block = f"""
+=== KHỐI NGOẠI (Foreign Flow Agent) ===
+Hành vi: {ff_report.get('net_flow')} | Room: {ff_report.get('room_usage_pct')}% ({ff_report.get('room_risk')})
+Ý định: {ff_report.get('foreign_intent')} | Accumulation signal: {'CÓ' if ff_report.get('accumulation_signal') else 'KHÔNG'}
+Tác động ngắn hạn: {ff_report.get('short_term_impact')}
+Cảnh báo: {ff_report.get('warning') or 'Không có'}
+"""
+
+    # Phần FA — chỉ thêm nếu có dữ liệu
+    fa_block = ""
+    if fa_report and not fa_report.get("skipped") and not fa_report.get("error"):
+        fa_block = f"""
+=== PHÂN TÍCH CƠ BẢN (FA Agent) ===
+Định giá: {fa_report.get('valuation_verdict')} | Chất lượng LN: {fa_report.get('quality_score')}/100
+Triển vọng: {fa_report.get('growth_outlook')}
+Điểm mạnh: {'; '.join(fa_report.get('key_strengths', [])[:2])}
+Rủi ro FA: {'; '.join(fa_report.get('key_risks', [])[:2])}
+Cảnh báo: {'; '.join(fa_report.get('anomaly_flags', [])[:2]) or 'Không có'}
+Tóm tắt: {fa_report.get('fa_summary', '')}
+"""
 
     # Phần sentiment — chỉ thêm nếu có dữ liệu
     sentiment_block = ""
@@ -78,7 +113,7 @@ Dominant: {debate.get("summary", {}).get("dominant_side")} | Uncertainty: {debat
 Luận điểm Bull mạnh nhất: {debate.get("summary", {}).get("bull_strongest_point")}
 Luận điểm Bear mạnh nhất: {debate.get("summary", {}).get("bear_strongest_point")}
 Bức tranh thị trường: {debate.get("summary", {}).get("market_context")}
-{sentiment_block}
+{ff_block}{fa_block}{sentiment_block}{memory_block}
 === YÊU CẦU ===
 Đưa ra quyết định giao dịch phù hợp thị trường Việt Nam. Trả về JSON:
 

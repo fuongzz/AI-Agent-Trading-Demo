@@ -1,0 +1,58 @@
+{
+  "symbol": "VSC",
+  "date": "2026-04-07",
+  "company": "N/A",
+  "exchange": "N/A",
+  "industry": "N/A",
+  "price": {
+    "latest": 24.1,
+    "change": "+0.55",
+    "change_pct": "+2.34%"
+  },
+  "signals": {
+    "rsi": {
+      "value": 50.32,
+      "signal": "NEUTRAL"
+    },
+    "ma": {
+      "ma5": 24.0,
+      "ma20": 24.24,
+      "trend": "GIẢM",
+      "cross": "NONE"
+    },
+    "macd": {
+      "macd": -0.0278,
+      "signal": 0.0627,
+      "histogram": -0.0906,
+      "signal_text": "MACD âm nhưng đang phục hồi"
+    },
+    "bollinger": {
+      "upper": 25.82,
+      "middle": 24.24,
+      "lower": 22.67,
+      "percent_b": 45.48,
+      "signal_text": "Giá dưới middle band, xu hướng giảm"
+    },
+    "atr": {
+      "value": 1.05,
+      "volatility": "CAO"
+    },
+    "volume": {
+      "ratio": 1.43,
+      "signal": "BÌNH THƯỜNG"
+    },
+    "sr": {
+      "support": 21.5,
+      "resistance": 27.9,
+      "zone_signal": "Giá gần middle band, cần xác nhận hướng"
+    }
+  },
+  "recommendation": {
+    "action": "CHỜ",
+    "entry": 24.1,
+    "sl": 22.52,
+    "tp": 26.2,
+    "confidence": "THẤP",
+    "reason": "RSI trung tính, MACD âm, giá dưới MA20 với biến động cao. Cần chờ tín hiệu xác nhận trước khi vào lệnh."
+  }
+}
